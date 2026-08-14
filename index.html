@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Event Management Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            text-align: left;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            font-size: 0.95em;
+            color: #555;
+            margin: 0;
+        }
+
+        .buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .info {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 4px solid #0099cc;
+        }
+
+        .info h4 {
+            color: #0099cc;
+            margin-bottom: 10px;
+        }
+
+        .info p {
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background: #f0f0f0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 College Event Portal</h1>
+        <p>Centralized platform for managing college events, approvals, and registrations</p>
+
+        <div class="features">
+            <div class="feature">
+                <h3>📅 Event Calendar</h3>
+                <p>View all college events in one place with real-time clash detection</p>
+            </div>
+            <div class="feature">
+                <h3>✅ Approvals</h3>
+                <p>Digital permission workflow from faculty to dean</p>
+            </div>
+            <div class="feature">
+                <h3>📝 Registration</h3>
+                <p>Student registration with QR code tickets</p>
+            </div>
+            <div class="feature">
+                <h3>🏢 Sponsorship</h3>
+                <p>Track sponsors and deliverables</p>
+            </div>
+        </div>
+
+        <div class="info">
+            <h4>📌 Status: Portal Code Ready</h4>
+            <p>The backend API and frontend code are available in the GitHub repository. Follow the setup guide below to run it locally or deploy it.</p>
+        </div>
+
+        <div style="text-align: left; margin-top: 30px;">
+            <h3 style="color: #333; margin-bottom: 15px;">🚀 Quick Start Guide</h3>
+            
+            <h4 style="color: #667eea; margin-top: 20px;">Test Accounts:</h4>
+            <table>
+                <tr>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                </tr>
+                <tr>
+                    <td><strong>Admin</strong></td>
+                    <td>admin@college.edu</td>
+                    <td>password123</td>
+                </tr>
+                <tr>
+                    <td><strong>Dean</strong></td>
+                    <td>dean@college.edu</td>
+                    <td>password123</td>
+                </tr>
+                <tr>
+                    <td><strong>Faculty</strong></td>
+                    <td>faculty@college.edu</td>
+                    <td>password123</td>
+                </tr>
+                <tr>
+                    <td><strong>Coordinator</strong></td>
+                    <td>coordinator1@college.edu</td>
+                    <td>password123</td>
+                </tr>
+            </table>
+
+            <h4 style="color: #667eea; margin-top: 20px;">To Run Locally:</h4>
+            <p style="color: #555; margin-bottom: 10px;">1. Install Node.js from https://nodejs.org</p>
+            <p style="color: #555; margin-bottom: 10px;">2. Install PostgreSQL from https://www.postgresql.org</p>
+            <p style="color: #555; margin-bottom: 10px;">3. Clone the repository:</p>
+            <div class="code">git clone https://github.com/AHONABASAK2001/college-event-portal.git</div>
+            
+            <p style="color: #555; margin-bottom: 10px;">4. Setup Backend:</p>
+            <div class="code">cd backend
+npm install
+npm run prisma:migrate
+npm run seed
+npm run dev</div>
+
+            <p style="color: #555; margin-bottom: 10px;">5. Setup Frontend (new terminal):</p>
+            <div class="code">cd frontend
+npm install
+npm run dev</div>
+
+            <p style="color: #555; margin-bottom: 10px;">6. Open in browser: http://localhost:5173</p>
+        </div>
+
+        <div class="buttons">
+            <a href="https://github.com/AHONABASAK2001/college-event-portal" class="btn btn-primary">📂 View Repository</a>
+            <a href="https://github.com/AHONABASAK2001/college-event-portal/blob/main/README.md" class="btn btn-secondary">📖 Read Docs</a>
+        </div>
+
+        <footer>
+            <p>College Event Management Portal | Group 8, Section A</p>
+            <p>Built with ❤️ for campus community</p>
+        </footer>
+    </div>
+</body>
+</html>
