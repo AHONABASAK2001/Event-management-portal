@@ -1,0 +1,414 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================
+// AUTHENTICATION & USERS
+// ========================
+
+model User {
+  id                    String       @id @default(cuid())
+  email                 String       @unique
+  password              String
+  firstName             String
+  lastName              String
+  phone                 String?
+  role                  UserRole
+  organizationId        String?
+  organization          Organization? @relation("OrgUsers", fields: [organizationId], references: [id])
+  
+  permissionRequests    PermissionRequest[] @relation("Requester")
+  approvals             PermissionRequest[] @relation("Approver")
+  sponsorDeliverables   SponsorDeliverable[] @relation("AssignedTo")
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([email])
+}
+
+enum UserRole {
+  STUDENT
+  CLUB_COORDINATOR
+  COMMITTEE_HEAD
+  FACULTY_COORDINATOR
+  DEAN_ADMIN
+  SUPER_ADMIN
+  SPONSOR
+}
+
+// ========================
+// ORGANIZATIONS
+// ========================
+
+model Organization {
+  id                    String       @id @default(cuid())
+  name                  String       @unique
+  type                  OrgType
+  contactEmail          String
+  contactPhone          String?
+  description           String?
+  users                 User[]       @relation("OrgUsers")
+  events                Event[]
+  sponsorships          Sponsorship[] @relation("OrgSponsors")
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+}
+
+enum OrgType {
+  CLUB
+  COMMITTEE
+}
+
+// ========================
+// EVENTS & BOOKINGS
+// ========================
+
+model Event {
+  id                    String       @id @default(cuid())
+  title                 String
+  description           String
+  organizationId        String
+  organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  eventDate             DateTime
+  venue                 String
+  capacity              Int
+  duration              Int
+  
+  status                EventStatus   @default(DRAFT)
+  createdAt             DateTime     @default(now())
+  submittedAt           DateTime?
+  
+  permissionRequests    PermissionRequest[] @relation("EventPermissions")
+  
+  registrations         Registration[]
+  isPublic              Boolean      @default(false)
+  isPaid                Boolean      @default(false)
+  ticketPrice           Float?
+  
+  sponsorships          Sponsorship[] @relation("EventSponsors")
+  
+  updatedAt             DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([eventDate])
+  @@index([venue])
+  @@index([status])
+}
+
+enum EventStatus {
+  DRAFT
+  SUBMITTED
+  FACULTY_REVIEW
+  DEAN_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+model VenueBooking {
+  id                    String       @id @default(cuid())
+  venue                 String
+  eventDate             DateTime
+  eventId               String
+  
+  createdAt             DateTime     @default(now())
+
+  @@unique([venue, eventDate])
+  @@index([eventDate])
+  @@index([venue])
+}
+
+// ========================
+// PERMISSION WORKFLOW
+// ========================
+
+model PermissionRequest {
+  id                    String       @id @default(cuid())
+  eventId               String
+  event                 Event        @relation("EventPermissions", fields: [eventId], references: [id], onDelete: Cascade)
+  
+  requesterId           String
+  requester             User         @relation("Requester", fields: [requesterId], references: [id])
+  
+  status                PermissionStatus @default(PENDING)
+  workflowLevel         WorkflowLevel @default(FACULTY_COORDINATOR)
+  
+  currentApproverId     String?
+  currentApprover       User?        @relation("Approver", fields: [currentApproverId], references: [id])
+  
+  approvalNotes         String?
+  rejectionReason       String?
+  
+  createdAt             DateTime     @default(now())
+  submittedAt           DateTime?
+  approvedAt            DateTime?
+  rejectedAt            DateTime?
+  updatedAt             DateTime     @updatedAt
+
+  @@index([eventId])
+  @@index([requesterId])
+  @@index([currentApproverId])
+  @@index([status])
+  @@index([workflowLevel])
+}
+
+enum PermissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ESCALATED
+}
+
+enum WorkflowLevel {
+  FACULTY_COORDINATOR
+  DEAN_ADMIN
+  APPROVED
+}
+
+// ========================
+// REGISTRATIONS & TICKETS
+// ========================
+
+model Registration {
+  id                    String       @id @default(cuid())
+  eventId               String
+  event                 Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  studentEmail          String
+  studentName           String
+  studentPhone          String?
+  
+  registrationDate      DateTime     @default(now())
+  ticketId              String?      @unique
+  qrCode                String?      @unique
+  
+  paymentStatus         PaymentStatus @default(PENDING)
+  paymentId             String?
+  paymentAmount         Float?
+  paymentDate           DateTime?
+  
+  status                RegistrationStatus @default(CONFIRMED)
+  checkInTime           DateTime?
+  
+  updatedAt             DateTime     @updatedAt
+
+  @@index([eventId])
+  @@index([studentEmail])
+  @@index([paymentStatus])
+}
+
+enum RegistrationStatus {
+  CONFIRMED
+  CHECKED_IN
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// ========================
+// SPONSORSHIP MANAGEMENT
+// ========================
+
+model Sponsor {
+  id                    String       @id @default(cuid())
+  companyName           String       @unique
+  tier                  SponsorTier
+  contactName           String
+  contactEmail          String
+  contactPhone          String
+  website               String?
+  logoUrl               String?
+  
+  sponsorships          Sponsorship[]
+  deliverables          SponsorDeliverable[]
+  
+  financialRecords      FinancialRecord[]
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+}
+
+enum SponsorTier {
+  PLATINUM
+  GOLD
+  SILVER
+  BRONZE
+  PARTNER
+}
+
+model Sponsorship {
+  id                    String       @id @default(cuid())
+  sponsorId             String
+  sponsor               Sponsor      @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  eventId               String
+  event                 Event        @relation("EventSponsors", fields: [eventId], references: [id], onDelete: Cascade)
+  
+  organizationId        String
+  organization          Organization @relation("OrgSponsors", fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  pledgedAmount         Float
+  receivedAmount        Float        @default(0.0)
+  status                SponsorshipStatus @default(PENDING)
+  
+  deliverables          SponsorDeliverable[]
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@unique([sponsorId, eventId])
+  @@index([sponsorId])
+  @@index([eventId])
+  @@index([status])
+}
+
+enum SponsorshipStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model SponsorDeliverable {
+  id                    String       @id @default(cuid())
+  sponsorshipId         String
+  sponsorship           Sponsorship  @relation(fields: [sponsorshipId], references: [id], onDelete: Cascade)
+  
+  sponsorId             String
+  sponsor               Sponsor      @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  title                 String
+  description           String
+  type                  DeliverableType
+  status                DeliverableStatus @default(PENDING)
+  
+  dueDate               DateTime
+  completionDate        DateTime?
+  
+  assignedToId          String?
+  assignedTo            User?        @relation("AssignedTo", fields: [assignedToId], references: [id])
+  
+  notes                 String?
+  evidenceUrl           String?
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@index([sponsorshipId])
+  @@index([sponsorId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum DeliverableType {
+  LOGO_PLACEMENT
+  SOCIAL_MEDIA_TAG
+  STALL_BOOTH
+  ANNOUNCEMENT
+  REPORT
+  OTHER
+}
+
+enum DeliverableStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+model FinancialRecord {
+  id                    String       @id @default(cuid())
+  sponsorId             String
+  sponsor               Sponsor      @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  
+  amount                Float
+  transactionDate       DateTime
+  transactionType       TransactionType
+  description           String
+  status                TransactionStatus @default(PENDING)
+  
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@index([sponsorId])
+  @@index([transactionDate])
+}
+
+enum TransactionType {
+  PLEDGE
+  PAYMENT_RECEIVED
+  REFUND
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// ========================
+// NOTIFICATIONS & AUDIT
+// ========================
+
+model Notification {
+  id                    String       @id @default(cuid())
+  userId                String
+  type                  NotificationType
+  title                 String
+  message               String
+  relatedEventId        String?
+  relatedPermissionId   String?
+  
+  isRead                Boolean      @default(false)
+  readAt                DateTime?
+  
+  createdAt             DateTime     @default(now())
+}
+
+enum NotificationType {
+  EVENT_APPROVED
+  EVENT_REJECTED
+  PERMISSION_PENDING
+  REGISTRATION_CONFIRMED
+  SPONSOR_CONFIRMATION
+  DELIVERABLE_DUE
+  ADMIN_ALERT
+}
+
+model AuditLog {
+  id                    String       @id @default(cuid())
+  userId                String
+  action                String
+  resourceType          String
+  resourceId            String
+  changes               String?
+  ipAddress             String?
+  userAgent             String?
+  
+  createdAt             DateTime     @default(now())
+
+  @@index([userId])
+  @@index([resourceType])
+  @@index([createdAt])
+}
