@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar - College Event Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header h2 {
+            color: #333;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .calendar-grid {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            padding: 10px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .dates {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .date-box {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: white;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .date-box:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .date-box.has-event {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .date-box.today {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .date-box.empty {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: default;
+        }
+
+        .events-sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .events-sidebar h3 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .event-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .event-item:hover {
+            background: #f0f2ff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .event-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .event-item p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .calendar-grid {
+                padding: 15px;
+            }
+
+            .date-box {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📅 Event Calendar</h1>
+    </div>
+
+    <div class="container">
+        <div class="calendar-header">
+            <h2>September 2024</h2>
+            <div class="calendar-nav">
+                <button onclick="previousMonth()">← Previous</button>
+                <button onclick="todayMonth()">Today</button>
+                <button onclick="nextMonth()">Next →</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+            </div>
+
+            <div class="dates">
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box">1</div>
+                
+                <div class="date-box">2</div>
+                <div class="date-box">3</div>
+                <div class="date-box">4</div>
+                <div class="date-box">5</div>
+                <div class="date-box">6</div>
+                <div class="date-box">7</div>
+                <div class="date-box">8</div>
+
+                <div class="date-box">9</div>
+                <div class="date-box">10</div>
+                <div class="date-box">11</div>
+                <div class="date-box">12</div>
+                <div class="date-box">13</div>
+                <div class="date-box">14</div>
+                <div class="date-box today">15 ⭐</div>
+
+                <div class="date-box">16</div>
+                <div class="date-box">17</div>
+                <div class="date-box">18</div>
+                <div class="date-box">19</div>
+                <div class="date-box">20</div>
+                <div class="date-box has-event">21 🎉</div>
+                <div class="date-box">22</div>
+
+                <div class="date-box">23</div>
+                <div class="date-box">24</div>
+                <div class="date-box has-event">25 🎊</div>
+                <div class="date-box">26</div>
+                <div class="date-box">27</div>
+                <div class="date-box">28</div>
+                <div class="date-box">29</div>
+
+                <div class="date-box">30</div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+                <div class="date-box empty"></div>
+            </div>
+        </div>
+
+        <div class="events-sidebar">
+            <h3>📌 Upcoming Events</h3>
+
+            <div class="event-item">
+                <h4>Annual Tech Summit</h4>
+                <p>📅 September 15, 2024 | 10:00 AM</p>
+                <p>📍 Auditorium A</p>
+                <p>👥 500 Capacity | 87 Registered</p>
+                <p>🏢 Coding Club</p>
+                <span class="event-badge">✅ Approved</span>
+            </div>
+
+            <div class="event-item">
+                <h4>Sports Day</h4>
+                <p>📅 September 21, 2024 | 8:00 AM</p>
+                <p>📍 Sports Ground</p>
+                <p>👥 1000 Capacity | 156 Registered</p>
+                <p>🏢 Sports Committee</p>
+                <span class="event-badge">✅ Approved</span>
+            </div>
+
+            <div class="event-item">
+                <h4>Debate Competition</h4>
+                <p>📅 September 25, 2024 | 2:00 PM</p>
+                <p>📍 Seminar Hall B</p>
+                <p>👥 200 Capacity | 52 Registered</p>
+                <p>🏢 Debate Society</p>
+                <span class="event-badge">✅ Approved</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previousMonth() {
+            alert('Would navigate to previous month');
+        }
+        function nextMonth() {
+            alert('Would navigate to next month');
+        }
+        function todayMonth() {
+            alert('Would navigate to today');
+        }
+    </script>
+</body>
+</html>
