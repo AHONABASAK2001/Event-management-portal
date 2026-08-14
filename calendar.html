@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Calendar - College Event Portal</title>
+    <title>Event Calendar - Management Portal</title>
     <style>
         * {
             margin: 0;
@@ -13,21 +13,19 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #f5f6fa;
         }
 
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar h1 {
             font-size: 1.5em;
+            font-weight: 700;
         }
 
         .container {
@@ -48,7 +46,8 @@
         }
 
         .calendar-header h2 {
-            color: #333;
+            color: #1e3c72;
+            font-size: 1.5em;
         }
 
         .calendar-nav {
@@ -63,13 +62,14 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
+            color: #333;
             transition: all 0.3s ease;
         }
 
         .calendar-nav button:hover {
-            background: #667eea;
+            background: #2a5298;
             color: white;
-            border-color: #667eea;
+            border-color: #2a5298;
         }
 
         .calendar-grid {
@@ -90,7 +90,7 @@
         .weekday {
             text-align: center;
             font-weight: 600;
-            color: #667eea;
+            color: #2a5298;
             padding: 10px;
             text-transform: uppercase;
             font-size: 0.9em;
@@ -112,22 +112,21 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
             background: white;
             font-weight: 600;
             color: #333;
         }
 
         .date-box:hover {
-            border-color: #667eea;
+            border-color: #2a5298;
             background: #f8f9ff;
-            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 10px rgba(42, 82, 152, 0.2);
         }
 
         .date-box.has-event {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            border-color: #667eea;
+            border-color: #2a5298;
         }
 
         .date-box.today {
@@ -150,16 +149,17 @@
         }
 
         .events-sidebar h3 {
-            color: #333;
+            color: #1e3c72;
             margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #2a5298;
             padding-bottom: 10px;
+            font-size: 1.3em;
         }
 
         .event-item {
             padding: 15px;
             background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #2a5298;
             margin-bottom: 15px;
             border-radius: 5px;
             transition: all 0.3s ease;
@@ -167,12 +167,13 @@
 
         .event-item:hover {
             background: #f0f2ff;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(42, 82, 152, 0.2);
         }
 
         .event-item h4 {
-            color: #333;
+            color: #1e3c72;
             margin-bottom: 8px;
+            font-size: 1.1em;
         }
 
         .event-item p {
@@ -184,12 +185,18 @@
         .event-badge {
             display: inline-block;
             padding: 4px 8px;
-            background: #667eea;
+            background: #2a5298;
             color: white;
             border-radius: 4px;
             font-size: 0.8em;
             font-weight: 600;
             margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
         }
 
         @media (max-width: 768px) {
@@ -211,16 +218,16 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>📅 Event Calendar</h1>
+        <h1>Event Calendar</h1>
     </div>
 
     <div class="container">
         <div class="calendar-header">
-            <h2>September 2024</h2>
+            <h2 id="monthYear">September 2024</h2>
             <div class="calendar-nav">
-                <button onclick="previousMonth()">← Previous</button>
+                <button onclick="previousMonth()">Previous</button>
                 <button onclick="todayMonth()">Today</button>
-                <button onclick="nextMonth()">Next →</button>
+                <button onclick="nextMonth()">Next</button>
             </div>
         </div>
 
@@ -234,100 +241,150 @@
                 <div class="weekday">Fri</div>
                 <div class="weekday">Sat</div>
             </div>
-
-            <div class="dates">
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box">1</div>
-                
-                <div class="date-box">2</div>
-                <div class="date-box">3</div>
-                <div class="date-box">4</div>
-                <div class="date-box">5</div>
-                <div class="date-box">6</div>
-                <div class="date-box">7</div>
-                <div class="date-box">8</div>
-
-                <div class="date-box">9</div>
-                <div class="date-box">10</div>
-                <div class="date-box">11</div>
-                <div class="date-box">12</div>
-                <div class="date-box">13</div>
-                <div class="date-box">14</div>
-                <div class="date-box today">15 ⭐</div>
-
-                <div class="date-box">16</div>
-                <div class="date-box">17</div>
-                <div class="date-box">18</div>
-                <div class="date-box">19</div>
-                <div class="date-box">20</div>
-                <div class="date-box has-event">21 🎉</div>
-                <div class="date-box">22</div>
-
-                <div class="date-box">23</div>
-                <div class="date-box">24</div>
-                <div class="date-box has-event">25 🎊</div>
-                <div class="date-box">26</div>
-                <div class="date-box">27</div>
-                <div class="date-box">28</div>
-                <div class="date-box">29</div>
-
-                <div class="date-box">30</div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-                <div class="date-box empty"></div>
-            </div>
+            <div class="dates" id="dateContainer"></div>
         </div>
 
         <div class="events-sidebar">
-            <h3>📌 Upcoming Events</h3>
-
-            <div class="event-item">
-                <h4>Annual Tech Summit</h4>
-                <p>📅 September 15, 2024 | 10:00 AM</p>
-                <p>📍 Auditorium A</p>
-                <p>👥 500 Capacity | 87 Registered</p>
-                <p>🏢 Coding Club</p>
-                <span class="event-badge">✅ Approved</span>
-            </div>
-
-            <div class="event-item">
-                <h4>Sports Day</h4>
-                <p>📅 September 21, 2024 | 8:00 AM</p>
-                <p>📍 Sports Ground</p>
-                <p>👥 1000 Capacity | 156 Registered</p>
-                <p>🏢 Sports Committee</p>
-                <span class="event-badge">✅ Approved</span>
-            </div>
-
-            <div class="event-item">
-                <h4>Debate Competition</h4>
-                <p>📅 September 25, 2024 | 2:00 PM</p>
-                <p>📍 Seminar Hall B</p>
-                <p>👥 200 Capacity | 52 Registered</p>
-                <p>🏢 Debate Society</p>
-                <span class="event-badge">✅ Approved</span>
-            </div>
+            <h3>Upcoming Events</h3>
+            <div id="eventsList"></div>
         </div>
     </div>
 
     <script>
+        const STORAGE_KEY = 'eventManagementData';
+        let currentDate = new Date();
+
+        function loadData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : { events: [], registrations: [] };
+        }
+
+        function getDaysInMonth(date) {
+            return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+        }
+
+        function getFirstDayOfMonth(date) {
+            return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+        }
+
+        function hasEvent(day) {
+            const data = loadData();
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+            return data.events.some(
+                event => event.status === 'APPROVED' && 
+                         new Date(event.date).toDateString() === date.toDateString()
+            );
+        }
+
+        function getEventsForDate(day) {
+            const data = loadData();
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+            return data.events.filter(
+                event => event.status === 'APPROVED' && 
+                         new Date(event.date).toDateString() === date.toDateString()
+            );
+        }
+
+        function renderCalendar() {
+            const daysInMonth = getDaysInMonth(currentDate);
+            const firstDay = getFirstDayOfMonth(currentDate);
+            const container = document.getElementById('dateContainer');
+            let html = '';
+
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="date-box empty"></div>';
+            }
+
+            // Date cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString();
+                const hasE = hasEvent(day);
+                const classes = `date-box ${isToday ? 'today' : ''} ${hasE ? 'has-event' : ''}`;
+                html += `<div class="${classes}" onclick="selectDate(${day})">${day}</div>`;
+            }
+
+            container.innerHTML = html;
+            updateMonthYear();
+            refreshEventsList();
+        }
+
+        function updateMonthYear() {
+            const options = { month: 'long', year: 'numeric' };
+            document.getElementById('monthYear').textContent = currentDate.toLocaleDateString('en-US', options);
+        }
+
+        function refreshEventsList() {
+            const data = loadData();
+            const upcomingEvents = data.events
+                .filter(e => e.status === 'APPROVED' && new Date(e.date) > new Date())
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 10);
+
+            const eventsList = document.getElementById('eventsList');
+            
+            if (upcomingEvents.length === 0) {
+                eventsList.innerHTML = '<div class="empty-state">No upcoming approved events</div>';
+            } else {
+                let html = '';
+                upcomingEvents.forEach(event => {
+                    html += `
+                        <div class="event-item">
+                            <h4>${event.title}</h4>
+                            <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
+                            <p>Organization: ${event.organization}</p>
+                            <p>Venue: ${event.venue}</p>
+                            <p>Capacity: ${event.capacity}</p>
+                            <span class="event-badge">Approved</span>
+                        </div>
+                    `;
+                });
+                eventsList.innerHTML = html;
+            }
+        }
+
+        function selectDate(day) {
+            const events = getEventsForDate(day);
+            const eventsList = document.getElementById('eventsList');
+            
+            if (events.length === 0) {
+                eventsList.innerHTML = '<div class="empty-state">No events on this date</div>';
+            } else {
+                let html = '';
+                events.forEach(event => {
+                    html += `
+                        <div class="event-item">
+                            <h4>${event.title}</h4>
+                            <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
+                            <p>Organization: ${event.organization}</p>
+                            <p>Venue: ${event.venue}</p>
+                            <p>Capacity: ${event.capacity}</p>
+                            <span class="event-badge">Approved</span>
+                        </div>
+                    `;
+                });
+                eventsList.innerHTML = html;
+            }
+        }
+
         function previousMonth() {
-            alert('Would navigate to previous month');
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
         }
+
         function nextMonth() {
-            alert('Would navigate to next month');
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
         }
+
         function todayMonth() {
-            alert('Would navigate to today');
+            currentDate = new Date();
+            renderCalendar();
         }
+
+        window.onload = function() {
+            renderCalendar();
+        };
     </script>
 </body>
 </html>
