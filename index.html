@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,25 +23,22 @@
 
         .container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            padding: 50px;
-            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px;
+            max-width: 900px;
             text-align: center;
         }
 
         h1 {
-            color: #333;
-            font-size: 2.5em;
+            color: #1e3c72;
+            font-size: 2.8em;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: 700;
         }
 
         p {
-            color: #666;
+            color: #555;
             font-size: 1.1em;
             margin-bottom: 30px;
             line-height: 1.6;
@@ -49,32 +46,33 @@
 
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
             text-align: left;
         }
 
         .feature {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #2a5298;
         }
 
         .feature h3 {
-            color: #667eea;
-            margin-bottom: 10px;
+            color: #1e3c72;
+            margin-bottom: 12px;
+            font-size: 1.2em;
         }
 
         .feature p {
             font-size: 0.95em;
-            color: #555;
+            color: #666;
             margin: 0;
         }
 
         .buttons {
-            margin-top: 40px;
+            margin-top: 50px;
             display: flex;
             gap: 15px;
             justify-content: center;
@@ -82,10 +80,10 @@
         }
 
         .btn {
-            padding: 12px 30px;
+            padding: 14px 35px;
             border: none;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 1.05em;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -94,24 +92,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #667eea;
-            color: white;
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
         }
 
         .info {
@@ -130,18 +117,6 @@
         .info p {
             color: #333;
             font-size: 0.95em;
-        }
-
-        .code {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            text-align: left;
-            overflow-x: auto;
         }
 
         table {
@@ -177,96 +152,41 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎓 College Event Portal</h1>
+        <h1>College Event Management Portal</h1>
         <p>Centralized platform for managing college events, approvals, and registrations</p>
 
         <div class="features">
             <div class="feature">
-                <h3>📅 Event Calendar</h3>
-                <p>View all college events in one place with real-time clash detection</p>
+                <h3>Event Calendar</h3>
+                <p>View all college events in one place with real-time conflict detection</p>
             </div>
             <div class="feature">
-                <h3>✅ Approvals</h3>
-                <p>Digital permission workflow from faculty to dean</p>
+                <h3>Digital Approvals</h3>
+                <p>Multi-level permission workflow from faculty to dean</p>
             </div>
             <div class="feature">
-                <h3>📝 Registration</h3>
-                <p>Student registration with QR code tickets</p>
+                <h3>Student Registration</h3>
+                <p>Registration with ticket generation and check-in</p>
             </div>
             <div class="feature">
-                <h3>🏢 Sponsorship</h3>
-                <p>Track sponsors and deliverables</p>
+                <h3>Sponsorship Tracking</h3>
+                <p>Track sponsors and manage deliverables</p>
             </div>
         </div>
 
         <div class="info">
-            <h4>📌 Status: Portal Code Ready</h4>
-            <p>The backend API and frontend code are available in the GitHub repository. Follow the setup guide below to run it locally or deploy it.</p>
+            <h4>System Status</h4>
+            <p>The portal is ready for use. Navigate to Admin Dashboard to create events, or visit Event Calendar to view approved events.</p>
         </div>
 
-        <div style="text-align: left; margin-top: 30px;">
-            <h3 style="color: #333; margin-bottom: 15px;">🚀 Quick Start Guide</h3>
-            
-            <h4 style="color: #667eea; margin-top: 20px;">Test Accounts:</h4>
-            <table>
-                <tr>
-                    <th>Role</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                </tr>
-                <tr>
-                    <td><strong>Admin</strong></td>
-                    <td>admin@college.edu</td>
-                    <td>password123</td>
-                </tr>
-                <tr>
-                    <td><strong>Dean</strong></td>
-                    <td>dean@college.edu</td>
-                    <td>password123</td>
-                </tr>
-                <tr>
-                    <td><strong>Faculty</strong></td>
-                    <td>faculty@college.edu</td>
-                    <td>password123</td>
-                </tr>
-                <tr>
-                    <td><strong>Coordinator</strong></td>
-                    <td>coordinator1@college.edu</td>
-                    <td>password123</td>
-                </tr>
-            </table>
-
-            <h4 style="color: #667eea; margin-top: 20px;">To Run Locally:</h4>
-            <p style="color: #555; margin-bottom: 10px;">1. Install Node.js from https://nodejs.org</p>
-            <p style="color: #555; margin-bottom: 10px;">2. Install PostgreSQL from https://www.postgresql.org</p>
-            <p style="color: #555; margin-bottom: 10px;">3. Clone the repository:</p>
-            <div class="code">git clone https://github.com/AHONABASAK2001/college-event-portal.git</div>
-            
-            <p style="color: #555; margin-bottom: 10px;">4. Setup Backend:</p>
-            <div class="code">cd backend
-npm install
-npm run prisma:migrate
-npm run seed
-npm run dev</div>
-
-            <p style="color: #555; margin-bottom: 10px;">5. Setup Frontend (new terminal):</p>
-            <div class="code">cd frontend
-npm install
-npm run dev</div>
-
-            <p style="color: #555; margin-bottom: 10px;">6. Open in browser: http://localhost:5173</p>
-        </div>
-
-              <div class="buttons">
-            <a href="admin-dashboard.html" class="btn btn-primary">📊 Admin Dashboard</a>
-            <a href="calendar.html" class="btn btn-primary">📅 Event Calendar</a>
-            <a href="register.html" class="btn btn-primary">🎫 Register for Events</a>
-            <a href="https://github.com/AHONABASAK2001/college-event-portal" class="btn btn-secondary">📂 View Repository</a>
+        <div class="buttons">
+            <a href="admin-dashboard.html" class="btn btn-primary">Admin Dashboard</a>
+            <a href="calendar.html" class="btn btn-primary">Event Calendar</a>
+            <a href="register.html" class="btn btn-primary">Event Registration</a>
         </div>
 
         <footer>
-            <p>College Event Management Portal | Group 8, Section A</p>
-            <p>Built with ❤️ for campus community</p>
+            <p>College Event Management Portal | Academic Year 2024</p>
         </footer>
     </div>
 </body>
