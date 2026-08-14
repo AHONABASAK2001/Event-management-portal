@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - College Event Portal</title>
+    <title>Admin Dashboard - Event Management Portal</title>
     <style>
         * {
             margin: 0;
@@ -13,11 +13,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #f5f6fa;
         }
 
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 20px 30px;
             display: flex;
@@ -28,6 +28,7 @@
 
         .navbar h1 {
             font-size: 1.5em;
+            font-weight: 700;
         }
 
         .user-info {
@@ -37,6 +38,11 @@
         .user-info p {
             font-size: 0.9em;
             opacity: 0.9;
+        }
+
+        .user-role {
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
         .container {
@@ -58,19 +64,21 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            border-top: 4px solid #2a5298;
         }
 
         .stat-card h3 {
-            color: #999;
-            font-size: 0.9em;
+            color: #666;
+            font-size: 0.85em;
             margin-bottom: 10px;
             text-transform: uppercase;
+            font-weight: 600;
         }
 
         .stat-card .number {
             font-size: 2.5em;
             font-weight: bold;
-            color: #667eea;
+            color: #1e3c72;
         }
 
         .section {
@@ -82,10 +90,11 @@
         }
 
         .section h2 {
-            color: #333;
+            color: #1e3c72;
             margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #2a5298;
             padding-bottom: 10px;
+            font-size: 1.5em;
         }
 
         table {
@@ -113,10 +122,11 @@
         }
 
         .badge {
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 5px;
             font-size: 0.85em;
             font-weight: 600;
+            display: inline-block;
         }
 
         .badge-approved {
@@ -142,6 +152,7 @@
             font-size: 0.9em;
             font-weight: 600;
             transition: all 0.3s ease;
+            margin-right: 5px;
         }
 
         .btn-approve {
@@ -160,6 +171,16 @@
 
         .btn-reject:hover {
             background: #c82333;
+        }
+
+        .btn-disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:hover {
+            background: #ccc;
         }
 
         .form-group {
@@ -193,12 +214,12 @@
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 12px 30px;
             border: none;
@@ -206,26 +227,34 @@
             cursor: pointer;
             font-weight: 600;
             width: 100%;
+            font-size: 1em;
         }
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .info-box {
-            background: #e8f4f8;
-            border-left: 4px solid #0099cc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            color: #333;
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
         }
 
         @media (max-width: 768px) {
@@ -247,81 +276,96 @@
 </head>
 <body>
     <div class="navbar">
-        <h1>📊 Admin Dashboard</h1>
+        <h1>Event Management Portal</h1>
         <div class="user-info">
-            <p>Welcome, <strong>Admin User</strong></p>
-            <p>Role: Super Admin</p>
+            <p class="user-role" id="userRole">Admin User</p>
+            <p>Administrator</p>
         </div>
     </div>
 
     <div class="container">
-        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Events</h3>
-                <div class="number">5</div>
+                <div class="number" id="totalEvents">0</div>
             </div>
             <div class="stat-card">
                 <h3>Pending Approvals</h3>
-                <div class="number">2</div>
+                <div class="number" id="pendingCount">0</div>
             </div>
             <div class="stat-card">
-                <h3>Active Events</h3>
-                <div class="number">3</div>
+                <h3>Approved Events</h3>
+                <div class="number" id="approvedCount">0</div>
             </div>
             <div class="stat-card">
                 <h3>Total Registrations</h3>
-                <div class="number">245</div>
+                <div class="number" id="registrationCount">0</div>
             </div>
         </div>
 
         <!-- Create Event Form -->
         <div class="section">
-            <h2>➕ Create New Event</h2>
-            <div class="info-box">
-                <strong>ℹ️ Note:</strong> This is a demo form. To create real events, use the actual portal application.
-            </div>
-            <form>
+            <h2>Create New Event</h2>
+            <div id="successMessage" class="success-message">Event created successfully!</div>
+            <form id="eventForm" onsubmit="handleCreateEvent(event)">
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Event Title *</label>
-                        <input type="text" placeholder="e.g., Annual Tech Summit" required>
+                        <label>Event Title <span style="color: red;">*</span></label>
+                        <input type="text" id="eventTitle" placeholder="e.g., Annual Workshop" required>
                     </div>
                     <div class="form-group">
-                        <label>Venue *</label>
-                        <input type="text" placeholder="e.g., Auditorium A" required>
+                        <label>Organizing Body <span style="color: red;">*</span></label>
+                        <select id="organization" required>
+                            <option value="">-- Select Organization --</option>
+                            <option value="Athflex">Athflex</option>
+                            <option value="Placement Committee">Placement Committee</option>
+                            <option value="Mezzo">Mezzo</option>
+                            <option value="TedEx">TedEx</option>
+                            <option value="ARC">ARC</option>
+                            <option value="IRC">IRC</option>
+                            <option value="MRC">MRC</option>
+                            <option value="Student Council">Student Council</option>
+                            <option value="Finacea">Finacea</option>
+                            <option value="Tassavur">Tassavur</option>
+                            <option value="Mercatus">Mercatus</option>
+                            <option value="Opuskriya">Opuskriya</option>
+                            <option value="Insightx">Insightx</option>
+                            <option value="Synergy">Synergy</option>
+                            <option value="CommWing">CommWing</option>
+                            <option value="Athena">Athena</option>
+                            <option value="Altius">Altius</option>
+                            <option value="Impelz">Impelz</option>
+                            <option value="Pahel">Pahel</option>
+                            <option value="Antragna">Antragna</option>
+                            <option value="Prarambh">Prarambh</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Description *</label>
-                    <textarea placeholder="Describe your event..." required></textarea>
+                    <label>Description <span style="color: red;">*</span></label>
+                    <textarea id="eventDescription" placeholder="Describe your event..." required></textarea>
                 </div>
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Event Date & Time *</label>
-                        <input type="datetime-local" required>
+                        <label>Event Date & Time <span style="color: red;">*</span></label>
+                        <input type="datetime-local" id="eventDate" required>
                     </div>
                     <div class="form-group">
-                        <label>Capacity *</label>
-                        <input type="number" placeholder="Max attendees" required>
+                        <label>Venue <span style="color: red;">*</span></label>
+                        <input type="text" id="eventVenue" placeholder="e.g., Auditorium A" required>
                     </div>
                 </div>
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Duration (minutes) *</label>
-                        <input type="number" placeholder="e.g., 120" required>
+                        <label>Capacity <span style="color: red;">*</span></label>
+                        <input type="number" id="eventCapacity" placeholder="Max attendees" required>
                     </div>
                     <div class="form-group">
-                        <label>Organization *</label>
-                        <select required>
-                            <option value="">-- Select Organization --</option>
-                            <option value="coding">Coding Club</option>
-                            <option value="robotics">Robotics Club</option>
-                            <option value="sports">Sports Committee</option>
-                        </select>
+                        <label>Duration (minutes) <span style="color: red;">*</span></label>
+                        <input type="number" id="eventDuration" placeholder="e.g., 120" required>
                     </div>
                 </div>
 
@@ -331,111 +375,270 @@
 
         <!-- Pending Approvals -->
         <div class="section">
-            <h2>⏳ Pending Approvals</h2>
-            <table>
-                <tr>
-                    <th>Event Title</th>
-                    <th>Submitted By</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                <tr>
-                    <td>Python Workshop</td>
-                    <td>John Smith (Coding Club)</td>
-                    <td>2024-09-15</td>
-                    <td><span class="badge badge-pending">Pending</span></td>
-                    <td>
-                        <button class="btn btn-approve">Approve</button>
-                        <button class="btn btn-reject">Reject</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Robotics Competition</td>
-                    <td>Sarah Johnson (Robotics Club)</td>
-                    <td>2024-09-20</td>
-                    <td><span class="badge badge-pending">Pending</span></td>
-                    <td>
-                        <button class="btn btn-approve">Approve</button>
-                        <button class="btn btn-reject">Reject</button>
-                    </td>
-                </tr>
-            </table>
+            <h2>Pending Approvals</h2>
+            <div id="pendingTable">
+                <table>
+                    <tr>
+                        <th>Event Title</th>
+                        <th>Organization</th>
+                        <th>Date</th>
+                        <th>Submitted Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </table>
+                <div class="empty-state" id="noPending" style="display: none;">No pending approvals</div>
+            </div>
         </div>
 
         <!-- Upcoming Events -->
         <div class="section">
-            <h2>📅 Upcoming Events</h2>
-            <table>
+            <h2>Upcoming Events</h2>
+            <table id="upcomingTable">
                 <tr>
                     <th>Event Title</th>
                     <th>Organization</th>
                     <th>Date</th>
                     <th>Venue</th>
-                    <th>Registrations</th>
+                    <th>Capacity</th>
                     <th>Status</th>
                 </tr>
-                <tr>
-                    <td>Annual Tech Summit</td>
-                    <td>Coding Club</td>
-                    <td>2024-09-15</td>
-                    <td>Auditorium A</td>
-                    <td>87</td>
-                    <td><span class="badge badge-approved">Approved</span></td>
-                </tr>
-                <tr>
-                    <td>Sports Day</td>
-                    <td>Sports Committee</td>
-                    <td>2024-09-22</td>
-                    <td>Sports Ground</td>
-                    <td>156</td>
-                    <td><span class="badge badge-approved">Approved</span></td>
-                </tr>
-                <tr>
-                    <td>Debate Competition</td>
-                    <td>Debate Society</td>
-                    <td>2024-09-25</td>
-                    <td>Seminar Hall B</td>
-                    <td>52</td>
-                    <td><span class="badge badge-approved">Approved</span></td>
-                </tr>
             </table>
+            <div class="empty-state" id="noUpcoming" style="display: none;">No upcoming events</div>
         </div>
 
         <!-- Organizations -->
         <div class="section">
-            <h2>🏢 Registered Organizations</h2>
-            <table>
+            <h2>Registered Organizations</h2>
+            <table id="organizationsTable">
                 <tr>
                     <th>Organization Name</th>
-                    <th>Type</th>
-                    <th>Contact Email</th>
-                    <th>Events</th>
-                    <th>Members</th>
-                </tr>
-                <tr>
-                    <td>Coding Club</td>
-                    <td>Club</td>
-                    <td>coding@college.edu</td>
-                    <td>3</td>
-                    <td>45</td>
-                </tr>
-                <tr>
-                    <td>Robotics Club</td>
-                    <td>Club</td>
-                    <td>robotics@college.edu</td>
-                    <td>2</td>
-                    <td>32</td>
-                </tr>
-                <tr>
-                    <td>Sports Committee</td>
-                    <td>Committee</td>
-                    <td>sports@college.edu</td>
-                    <td>4</td>
-                    <td>60</td>
+                    <th>Total Events</th>
+                    <th>Approved Events</th>
+                    <th>Pending Approvals</th>
                 </tr>
             </table>
+            <div class="empty-state" id="noOrgs" style="display: none;">No organizations yet</div>
         </div>
     </div>
+
+    <script>
+        // Storage key
+        const STORAGE_KEY = 'eventManagementData';
+        const USER_ROLE_KEY = 'userRole';
+
+        // Initialize storage
+        function initializeStorage() {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    events: [],
+                    registrations: []
+                }));
+            }
+            
+            // Set user role (for demo, we'll use 'admin')
+            if (!localStorage.getItem(USER_ROLE_KEY)) {
+                localStorage.setItem(USER_ROLE_KEY, 'admin');
+            }
+        }
+
+        // Get user role
+        function getUserRole() {
+            return localStorage.getItem(USER_ROLE_KEY) || 'user';
+        }
+
+        // Load data
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            return data;
+        }
+
+        // Save data
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // Handle create event
+        function handleCreateEvent(event) {
+            event.preventDefault();
+
+            const data = loadData();
+            const newEvent = {
+                id: Date.now(),
+                title: document.getElementById('eventTitle').value,
+                organization: document.getElementById('organization').value,
+                description: document.getElementById('eventDescription').value,
+                date: document.getElementById('eventDate').value,
+                venue: document.getElementById('eventVenue').value,
+                capacity: parseInt(document.getElementById('eventCapacity').value),
+                duration: parseInt(document.getElementById('eventDuration').value),
+                status: 'PENDING',
+                createdAt: new Date().toLocaleString(),
+                registrations: 0
+            };
+
+            data.events.push(newEvent);
+            saveData(data);
+
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            // Reset form
+            document.getElementById('eventForm').reset();
+
+            // Refresh tables
+            refreshDashboard();
+        }
+
+        // Approve event
+        function approveEvent(eventId) {
+            const userRole = getUserRole();
+            if (userRole !== 'admin') {
+                alert('Only administrators can approve events');
+                return;
+            }
+
+            const data = loadData();
+            const event = data.events.find(e => e.id === eventId);
+            if (event) {
+                event.status = 'APPROVED';
+                saveData(data);
+                refreshDashboard();
+            }
+        }
+
+        // Reject event
+        function rejectEvent(eventId) {
+            const userRole = getUserRole();
+            if (userRole !== 'admin') {
+                alert('Only administrators can reject events');
+                return;
+            }
+
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                const data = loadData();
+                const event = data.events.find(e => e.id === eventId);
+                if (event) {
+                    event.status = 'REJECTED';
+                    event.rejectionReason = reason;
+                    saveData(data);
+                    refreshDashboard();
+                }
+            }
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            const data = loadData();
+            const userRole = getUserRole();
+
+            // Update stats
+            document.getElementById('totalEvents').textContent = data.events.length;
+            document.getElementById('pendingCount').textContent = data.events.filter(e => e.status === 'PENDING').length;
+            document.getElementById('approvedCount').textContent = data.events.filter(e => e.status === 'APPROVED').length;
+            document.getElementById('registrationCount').textContent = data.registrations.length;
+
+            // Update pending approvals
+            const pendingEvents = data.events.filter(e => e.status === 'PENDING');
+            const pendingTable = document.getElementById('pendingTable');
+            
+            if (pendingEvents.length === 0) {
+                pendingTable.innerHTML = '<div class="empty-state">No pending approvals</div>';
+            } else {
+                let html = '<table><tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Submitted Date</th><th>Status</th><th>Action</th></tr>';
+                
+                pendingEvents.forEach(evt => {
+                    const isAdmin = userRole === 'admin';
+                    const approveBtn = isAdmin ? `<button class="btn btn-approve" onclick="approveEvent(${evt.id})">Approve</button>` : '';
+                    const rejectBtn = isAdmin ? `<button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>` : '';
+                    const actionBtns = isAdmin ? approveBtn + rejectBtn : '<span style="color: #999;">View Only</span>';
+                    
+                    html += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.createdAt}</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                            <td>${actionBtns}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</table>';
+                pendingTable.innerHTML = html;
+            }
+
+            // Update upcoming events
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED' && new Date(e.date) > new Date());
+            const upcomingTable = document.getElementById('upcomingTable');
+            
+            if (approvedEvents.length === 0) {
+                upcomingTable.style.display = 'none';
+                document.getElementById('noUpcoming').style.display = 'block';
+            } else {
+                document.getElementById('noUpcoming').style.display = 'none';
+                upcomingTable.style.display = 'table';
+                
+                let html = '<tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Venue</th><th>Capacity</th><th>Status</th></tr>';
+                
+                approvedEvents.forEach(evt => {
+                    html += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.venue}</td>
+                            <td>${evt.capacity}</td>
+                            <td><span class="badge badge-approved">Approved</span></td>
+                        </tr>
+                    `;
+                });
+                
+                upcomingTable.innerHTML = html;
+            }
+
+            // Update organizations stats
+            const orgs = [...new Set(data.events.map(e => e.organization))];
+            const orgsTable = document.getElementById('organizationsTable');
+            
+            if (orgs.length === 0) {
+                orgsTable.style.display = 'none';
+                document.getElementById('noOrgs').style.display = 'block';
+            } else {
+                document.getElementById('noOrgs').style.display = 'none';
+                orgsTable.style.display = 'table';
+                
+                let html = '<tr><th>Organization Name</th><th>Total Events</th><th>Approved Events</th><th>Pending Approvals</th></tr>';
+                
+                orgs.forEach(org => {
+                    const orgEvents = data.events.filter(e => e.organization === org);
+                    const approvedCount = orgEvents.filter(e => e.status === 'APPROVED').length;
+                    const pendingCount = orgEvents.filter(e => e.status === 'PENDING').length;
+                    
+                    html += `
+                        <tr>
+                            <td>${org}</td>
+                            <td>${orgEvents.length}</td>
+                            <td>${approvedCount}</td>
+                            <td>${pendingCount}</td>
+                        </tr>
+                    `;
+                });
+                
+                orgsTable.innerHTML = html;
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            initializeStorage();
+            refreshDashboard();
+        };
+    </script>
 </body>
 </html>
