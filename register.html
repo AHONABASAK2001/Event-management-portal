@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration - College Event Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .event-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .event-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .event-info p {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group.required label::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #0099cc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .ticket-info {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #333;
+            display: none;
+        }
+
+        .ticket-info h4 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .ticket-code {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎫 Event Registration</h1>
+        <p class="subtitle">Register for our upcoming events</p>
+
+        <div class="success-message" id="successMessage">
+            ✅ Registration successful! Your ticket has been generated.
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            ❌ Something went wrong. Please try again.
+        </div>
+
+        <!-- Event Selection -->
+        <div class="form-group">
+            <label class="required">Select Event</label>
+            <select id="eventSelect" onchange="updateEventInfo()">
+                <option value="">-- Choose an event --</option>
+                <option value="tech-summit" data-date="2024-09-15" data-venue="Auditorium A" data-capacity="500">Annual Tech Summit</option>
+                <option value="sports-day" data-date="2024-09-21" data-venue="Sports Ground" data-capacity="1000">Sports Day</option>
+                <option value="debate" data-date="2024-09-25" data-venue="Seminar Hall B" data-capacity="200">Debate Competition</option>
+            </select>
+        </div>
+
+        <!-- Event Info Display -->
+        <div class="event-info" id="eventInfoBox" style="display:none;">
+            <h3 id="eventName"></h3>
+            <p><strong>📅 Date:</strong> <span id="eventDate"></span></p>
+            <p><strong>📍 Venue:</strong> <span id="eventVenue"></span></p>
+            <p><strong>👥 Capacity:</strong> <span id="eventCapacity"></span></p>
+            <p><strong>📊 Available Seats:</strong> <span id="eventSeats" class="badge" style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: 600;"></span></p>
+        </div>
+
+        <form id="registrationForm" onsubmit="handleSubmit(event)">
+            <!-- Student Name -->
+            <div class="form-group required">
+                <label>Full Name</label>
+                <input 
+                    type="text" 
+                    id="studentName" 
+                    placeholder="Enter your full name"
+                    required
+                >
+            </div>
+
+            <!-- Email -->
+            <div class="form-group required">
+                <label>Email Address</label>
+                <input 
+                    type="email" 
+                    id="studentEmail" 
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group required">
+                <label>Phone Number</label>
+                <input 
+                    type="tel" 
+                    id="studentPhone" 
+                    placeholder="Enter your phone number"
+                    required
+                >
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the terms and conditions</label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">🎫 Register Now</button>
+        </form>
+
+        <!-- Ticket Display -->
+        <div class="ticket-info" id="ticketInfo">
+            <h4>🎫 Your Ticket</h4>
+            <p>Your registration is confirmed! Here's your ticket ID:</p>
+            <div class="ticket-code" id="ticketCode"></div>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #666;">Save this ticket for check-in at the event.</p>
+        </div>
+
+        <div class="info-box">
+            <strong>ℹ️ Note:</strong> This is a demo registration form. The actual portal will process real registrations and generate QR code tickets.
+        </div>
+    </div>
+
+    <script>
+        function updateEventInfo() {
+            const select = document.getElementById('eventSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            const eventBox = document.getElementById('eventInfoBox');
+
+            if (select.value) {
+                document.getElementById('eventName').textContent = selectedOption.text;
+                document.getElementById('eventDate').textContent = selectedOption.dataset.date;
+                document.getElementById('eventVenue').textContent = selectedOption.dataset.venue;
+                document.getElementById('eventCapacity').textContent = selectedOption.dataset.capacity + ' people';
+                document.getElementById('eventSeats').textContent = Math.floor(Math.random() * 200) + ' seats';
+                eventBox.style.display = 'block';
+            } else {
+                eventBox.style.display = 'none';
+            }
+        }
+
+        function generateTicketId() {
+            return 'TICKET-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const eventSelect = document.getElementById('eventSelect');
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            const studentPhone = document.getElementById('studentPhone').value;
+
+            if (!eventSelect.value) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = '❌ Please select an event';
+                return;
+            }
+
+            // Simulate processing
+            document.getElementById('registrationForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('ticketInfo').style.display = 'block';
+            document.getElementById('ticketCode').textContent = generateTicketId();
+
+            // Scroll to ticket
+            setTimeout(() => {
+                document.getElementById('ticketInfo').scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        }
+    </script>
+</body>
+</html>
