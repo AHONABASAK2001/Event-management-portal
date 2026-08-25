@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Calendar - Management Portal</title>
+    <title>Enhanced Event Calendar - Management Portal</title>
     <style>
         * {
             margin: 0;
@@ -72,6 +72,21 @@
             border-color: #2a5298;
         }
 
+        .alert-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-box.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
         .calendar-grid {
             background: white;
             border-radius: 10px;
@@ -115,6 +130,7 @@
             background: white;
             font-weight: 600;
             color: #333;
+            position: relative;
         }
 
         .date-box:hover {
@@ -129,15 +145,25 @@
             border-color: #2a5298;
         }
 
+        .date-box.has-conflict {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border-color: #dc3545;
+        }
+
         .date-box.today {
-            background: #fff3cd;
-            border-color: #ffc107;
+            border: 2px solid #ffc107;
         }
 
         .date-box.empty {
             background: #f5f5f5;
             color: #ccc;
             cursor: default;
+        }
+
+        .event-indicator {
+            font-size: 0.7em;
+            margin-top: 2px;
         }
 
         .events-sidebar {
@@ -163,6 +189,11 @@
             margin-bottom: 15px;
             border-radius: 5px;
             transition: all 0.3s ease;
+        }
+
+        .event-item.conflict {
+            border-left-color: #dc3545;
+            background: #ffe6e6;
         }
 
         .event-item:hover {
@@ -193,10 +224,51 @@
             margin-top: 10px;
         }
 
+        .event-badge.conflict {
+            background: #dc3545;
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px;
             color: #999;
+        }
+
+        .legend {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+
+        .legend-box.blue {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .legend-box.red {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .legend-box.white {
+            background: white;
+            border: 2px solid #ffc107;
         }
 
         @media (max-width: 768px) {
@@ -213,12 +285,16 @@
             .date-box {
                 font-size: 0.8em;
             }
+
+            .legend {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>Event Calendar</h1>
+        <h1>Event Calendar with Clash Detection</h1>
     </div>
 
     <div class="container">
@@ -228,6 +304,23 @@
                 <button onclick="previousMonth()">Previous</button>
                 <button onclick="todayMonth()">Today</button>
                 <button onclick="nextMonth()">Next</button>
+            </div>
+        </div>
+
+        <div id="conflictAlert"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box blue"></div>
+                <span>Event Scheduled</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box red"></div>
+                <span>Calendar Conflict Detected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box white"></div>
+                <span>Today</span>
             </div>
         </div>
 
@@ -254,6 +347,10 @@
         const STORAGE_KEY = 'eventManagementData';
         let currentDate = new Date();
 
+        window.onload = function() {
+            renderCalendar();
+        };
+
         function loadData() {
             const data = localStorage.getItem(STORAGE_KEY);
             return data ? JSON.parse(data) : { events: [], registrations: [] };
@@ -267,6 +364,37 @@
             return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
         }
 
+        function detectClashes() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+            const clashes = [];
+
+            for (let i = 0; i < approvedEvents.length; i++) {
+                for (let j = i + 1; j < approvedEvents.length; j++) {
+                    const event1 = approvedEvents[i];
+                    const event2 = approvedEvents[j];
+
+                    if (event1.venue === event2.venue) {
+                        const date1 = new Date(event1.date);
+                        const date2 = new Date(event2.date);
+                        const timeDiff = Math.abs(date1 - date2) / (1000 * 60);
+
+                        if (timeDiff < (event1.duration || 120)) {
+                            clashes.push({
+                                event1Id: event1.id,
+                                event2Id: event2.id,
+                                event1: event1.title,
+                                event2: event2.title,
+                                venue: event1.venue
+                            });
+                        }
+                    }
+                }
+            }
+
+            return clashes;
+        }
+
         function hasEvent(day) {
             const data = loadData();
             const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
@@ -274,6 +402,20 @@
                 event => event.status === 'APPROVED' && 
                          new Date(event.date).toDateString() === date.toDateString()
             );
+        }
+
+        function hasClash(day) {
+            const data = loadData();
+            const clashes = detectClashes();
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+            
+            return clashes.some(clash => {
+                const event1Date = new Date(data.events.find(e => e.id === clash.event1Id).date);
+                const event2Date = new Date(data.events.find(e => e.id === clash.event2Id).date);
+                
+                return event1Date.toDateString() === date.toDateString() || 
+                       event2Date.toDateString() === date.toDateString();
+            });
         }
 
         function getEventsForDate(day) {
@@ -291,27 +433,44 @@
             const container = document.getElementById('dateContainer');
             let html = '';
 
-            // Empty cells
             for (let i = 0; i < firstDay; i++) {
                 html += '<div class="date-box empty"></div>';
             }
 
-            // Date cells
             for (let day = 1; day <= daysInMonth; day++) {
                 const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString();
                 const hasE = hasEvent(day);
-                const classes = `date-box ${isToday ? 'today' : ''} ${hasE ? 'has-event' : ''}`;
+                const clash = hasClash(day);
+                const classes = `date-box ${isToday ? 'today' : ''} ${clash ? 'has-conflict' : hasE ? 'has-event' : ''}`;
                 html += `<div class="${classes}" onclick="selectDate(${day})">${day}</div>`;
             }
 
             container.innerHTML = html;
             updateMonthYear();
             refreshEventsList();
+            showClashAlert();
         }
 
         function updateMonthYear() {
             const options = { month: 'long', year: 'numeric' };
             document.getElementById('monthYear').textContent = currentDate.toLocaleDateString('en-US', options);
+        }
+
+        function showClashAlert() {
+            const clashes = detectClashes();
+            const alertBox = document.getElementById('conflictAlert');
+
+            if (clashes.length === 0) {
+                alertBox.innerHTML = '<div class="alert-box success">No calendar conflicts detected. All events can proceed as scheduled.</div>';
+            } else {
+                let html = '<div class="alert-box">';
+                html += '<strong>Calendar Conflicts Detected:</strong><ul style="margin-top: 10px; margin-left: 20px;">';
+                clashes.forEach(clash => {
+                    html += `<li>"${clash.event1}" and "${clash.event2}" both use ${clash.venue}</li>`;
+                });
+                html += '</ul></div>';
+                alertBox.innerHTML = html;
+            }
         }
 
         function refreshEventsList() {
@@ -321,6 +480,7 @@
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
                 .slice(0, 10);
 
+            const clashes = detectClashes();
             const eventsList = document.getElementById('eventsList');
             
             if (upcomingEvents.length === 0) {
@@ -328,14 +488,19 @@
             } else {
                 let html = '';
                 upcomingEvents.forEach(event => {
+                    const isInClash = clashes.some(c => c.event1Id === event.id || c.event2Id === event.id);
+                    const cardClass = isInClash ? 'conflict' : '';
+                    const badgeClass = isInClash ? 'conflict' : '';
+                    
                     html += `
-                        <div class="event-item">
+                        <div class="event-item ${cardClass}">
                             <h4>${event.title}</h4>
-                            <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
                             <p>Organization: ${event.organization}</p>
+                            <p>Date: ${new Date(event.date).toLocaleDateString()} at ${new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             <p>Venue: ${event.venue}</p>
                             <p>Capacity: ${event.capacity}</p>
-                            <span class="event-badge">Approved</span>
+                            ${isInClash ? '<p style="color: #dc3545; font-weight: 600;">Warning: Venue conflict detected</p>' : ''}
+                            <span class="event-badge ${badgeClass}">${isInClash ? 'Conflict' : 'Approved'}</span>
                         </div>
                     `;
                 });
@@ -346,20 +511,27 @@
         function selectDate(day) {
             const events = getEventsForDate(day);
             const eventsList = document.getElementById('eventsList');
+            const clashes = detectClashes();
             
             if (events.length === 0) {
                 eventsList.innerHTML = '<div class="empty-state">No events on this date</div>';
             } else {
                 let html = '';
                 events.forEach(event => {
+                    const isInClash = clashes.some(c => c.event1Id === event.id || c.event2Id === event.id);
+                    const cardClass = isInClash ? 'conflict' : '';
+                    const badgeClass = isInClash ? 'conflict' : '';
+                    
                     html += `
-                        <div class="event-item">
+                        <div class="event-item ${cardClass}">
                             <h4>${event.title}</h4>
-                            <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
                             <p>Organization: ${event.organization}</p>
+                            <p>Date: ${new Date(event.date).toLocaleDateString()} at ${new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             <p>Venue: ${event.venue}</p>
                             <p>Capacity: ${event.capacity}</p>
-                            <span class="event-badge">Approved</span>
+                            <p>Duration: ${event.duration} minutes</p>
+                            ${isInClash ? '<p style="color: #dc3545; font-weight: 600;">Warning: Venue conflict detected</p>' : ''}
+                            <span class="event-badge ${badgeClass}">${isInClash ? 'Conflict' : 'Approved'}</span>
                         </div>
                     `;
                 });
@@ -381,10 +553,6 @@
             currentDate = new Date();
             renderCalendar();
         }
-
-        window.onload = function() {
-            renderCalendar();
-        };
     </script>
 </body>
 </html>
