@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Committee Communication - Event Management Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .tab-button:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-button.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        }
+
+        .message-thread {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message-thread h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .thread-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .message {
+            background: white;
+            padding: 15px;
+            border-left: 4px solid #2a5298;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .message-time {
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .message-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .event-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            background: #f0f2ff;
+            box-shadow: 0 2px 8px rgba(42, 82, 152, 0.2);
+        }
+
+        .event-card h4 {
+            color: #1e3c72;
+            margin-bottom: 8px;
+        }
+
+        .event-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .update-log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #0099cc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .update-log strong {
+            color: #1e3c72;
+        }
+
+        .update-log p {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #2a5298;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+
+            .thread-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Cross-Committee Communication</h1>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'events')">Event Discussions</button>
+            <button class="tab-button" onclick="openTab(event, 'updates')">Update Log</button>
+            <button class="tab-button" onclick="openTab(event, 'announcements')">Announcements</button>
+        </div>
+
+        <!-- Event Discussions Tab -->
+        <div id="events" class="tab-content active">
+            <div class="section">
+                <h2>Event-Specific Discussion Threads</h2>
+                <p style="color: #666; margin-bottom: 20px;">Select an event to view and participate in discussions</p>
+
+                <div id="eventsList"></div>
+            </div>
+        </div>
+
+        <!-- Update Log Tab -->
+        <div id="updates" class="tab-content">
+            <div class="section">
+                <h2>Event Update Log</h2>
+                <p style="color: #666; margin-bottom: 20px;">Track all changes and updates across all events</p>
+
+                <div id="updateLogList"></div>
+            </div>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div id="announcements" class="tab-content">
+            <div class="section">
+                <h2>Cross-Committee Announcements</h2>
+                
+                <div id="successMessage" class="success-message">Announcement posted successfully!</div>
+
+                <form id="announcementForm" onsubmit="handlePostAnnouncement(event)">
+                    <div class="form-group">
+                        <label>Title <span style="color: red;">*</span></label>
+                        <input type="text" id="announcementTitle" placeholder="Announcement title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message <span style="color: red;">*</span></label>
+                        <textarea id="announcementMessage" placeholder="Type your announcement..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Post Announcement</button>
+                </form>
+
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">Recent Announcements</h3>
+                <div id="announcementsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Thread Discussion -->
+    <div id="threadModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+        <div style="background-color: white; margin: 5% auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 700px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+                <h2 id="threadTitle" style="color: #1e3c72; font-size: 1.5em;"></h2>
+                <span style="font-size: 28px; font-weight: bold; cursor: pointer; color: #aaa;" onclick="closeThread()">&times;</span>
+            </div>
+
+            <div id="threadMessages" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
+
+            <form id="messageForm" onsubmit="handlePostMessage(event)">
+                <div class="form-group">
+                    <label>Add Comment <span style="color: red;">*</span></label>
+                    <textarea id="messageText" placeholder="Type your message..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Organization <span style="color: red;">*</span></label>
+                    <select id="messageOrg" required>
+                        <option value="">-- Select Organization --</option>
+                        <optgroup label="Clubs (12)">
+                            <option value="Athflex">Athflex</option>
+                            <option value="Mezzo">Mezzo</option>
+                            <option value="TedEx">TedEx</option>
+                            <option value="ARC">ARC</option>
+                            <option value="IRC">IRC</option>
+                            <option value="MRC">MRC</option>
+                            <option value="Finacea">Finacea</option>
+                            <option value="Tassavur">Tassavur</option>
+                            <option value="Mercatus">Mercatus</option>
+                            <option value="Opuskriya">Opuskriya</option>
+                            <option value="Insightx">Insightx</option>
+                            <option value="Synergy">Synergy</option>
+                        </optgroup>
+                        <optgroup label="Committees (8)">
+                            <option value="Student Council">Student Council</option>
+                            <option value="CommWing">CommWing</option>
+                            <option value="Athena">Athena</option>
+                            <option value="Altius">Altius</option>
+                            <option value="Impelz">Impelz</option>
+                            <option value="Pahel">Pahel</option>
+                            <option value="Antragna">Antragna</option>
+                            <option value="Prarambh">Prarambh</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Post Message</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'eventManagementData';
+        const COMMUNICATION_KEY = 'communicationData';
+        let currentThreadEventId = null;
+
+        window.onload = function() {
+            initializeStorage();
+            refreshCommunication();
+        };
+
+        function initializeStorage() {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
+            }
+            if (!localStorage.getItem(COMMUNICATION_KEY)) {
+                localStorage.setItem(COMMUNICATION_KEY, JSON.stringify({ 
+                    threads: [], 
+                    updates: [],
+                    announcements: []
+                }));
+            }
+        }
+
+        function loadCommunicationData() {
+            return JSON.parse(localStorage.getItem(COMMUNICATION_KEY)) || { 
+                threads: [], 
+                updates: [],
+                announcements: []
+            };
+        }
+
+        function saveCommunicationData(data) {
+            localStorage.setItem(COMMUNICATION_KEY, JSON.stringify(data));
+        }
+
+        function refreshCommunication() {
+            const eventData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [] };
+            const approvedEvents = eventData.events.filter(e => e.status === 'APPROVED');
+
+            let eventsHtml = '';
+            if (approvedEvents.length === 0) {
+                eventsHtml = '<div class="empty-state">No approved events to discuss</div>';
+            } else {
+                approvedEvents.forEach(event => {
+                    eventsHtml += `
+                        <div class="event-card" onclick="openEventThread(${event.id}, '${event.title.replace(/'/g, "\\'")}')">
+                            <h4>${event.title}</h4>
+                            <p>Organization: ${event.organization}</p>
+                            <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
+                            <p>Venue: ${event.venue}</p>
+                            <span class="badge">Click to discuss</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('eventsList').innerHTML = eventsHtml;
+
+            // Update log
+            const commData = loadCommunicationData();
+            let updateHtml = '';
+            if (commData.updates.length === 0) {
+                updateHtml = '<div class="empty-state">No updates yet</div>';
+            } else {
+                commData.updates.forEach(update => {
+                    updateHtml += `
+                        <div class="update-log">
+                            <strong>${update.title}</strong>
+                            <p>By ${update.organization} - ${update.timestamp}</p>
+                            <p>${update.message}</p>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('updateLogList').innerHTML = updateHtml;
+
+            // Announcements
+            let announcementHtml = '';
+            if (commData.announcements.length === 0) {
+                announcementHtml = '<div class="empty-state">No announcements yet</div>';
+            } else {
+                commData.announcements.forEach(announcement => {
+                    announcementHtml += `
+                        <div class="message-thread">
+                            <h3>${announcement.title}</h3>
+                            <p style="color: #666; font-size: 0.9em;">${announcement.timestamp}</p>
+                            <p style="color: #555; margin-top: 10px;">${announcement.message}</p>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('announcementsList').innerHTML = announcementHtml;
+        }
+
+        function openEventThread(eventId, eventTitle) {
+            currentThreadEventId = eventId;
+            document.getElementById('threadTitle').textContent = 'Discussion: ' + eventTitle;
+
+            const commData = loadCommunicationData();
+            let thread = commData.threads.find(t => t.eventId === eventId);
+            
+            if (!thread) {
+                thread = {
+                    eventId: eventId,
+                    messages: []
+                };
+                commData.threads.push(thread);
+                saveCommunicationData(commData);
+            }
+
+            let messagesHtml = '';
+            if (thread.messages.length === 0) {
+                messagesHtml = '<div class="empty-state">No messages yet. Be the first to comment!</div>';
+            } else {
+                thread.messages.forEach(msg => {
+                    messagesHtml += `
+                        <div class="message">
+                            <div class="message-header">
+                                <span class="message-author">${msg.organization}</span>
+                                <span class="message-time">${msg.timestamp}</span>
+                            </div>
+                            <div class="message-content">${msg.content}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('threadMessages').innerHTML = messagesHtml;
+            document.getElementById('threadModal').style.display = 'block';
+        }
+
+        function closeThread() {
+            document.getElementById('threadModal').style.display = 'none';
+            currentThreadEventId = null;
+        }
+
+        function handlePostMessage(event) {
+            event.preventDefault();
+
+            const content = document.getElementById('messageText').value;
+            const org = document.getElementById('messageOrg').value;
+
+            const commData = loadCommunicationData();
+            let thread = commData.threads.find(t => t.eventId === currentThreadEventId);
+
+            if (thread) {
+                thread.messages.push({
+                    content: content,
+                    organization: org,
+                    timestamp: new Date().toLocaleString()
+                });
+
+                saveCommunicationData(commData);
+                document.getElementById('messageForm').reset();
+                openEventThread(currentThreadEventId, document.getElementById('threadTitle').textContent.replace('Discussion: ', ''));
+            }
+        }
+
+        function handlePostAnnouncement(event) {
+            event.preventDefault();
+
+            const commData = loadCommunicationData();
+            const announcement = {
+                title: document.getElementById('announcementTitle').value,
+                message: document.getElementById('announcementMessage').value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            commData.announcements.push(announcement);
+            saveCommunicationData(commData);
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            document.getElementById('announcementForm').reset();
+            refreshCommunication();
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('threadModal');
+            if (event.target === modal) {
+                closeThread();
+            }
+        };
+    </script>
+</body>
+</html>
