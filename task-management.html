@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management - Event Management Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .tab-button:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-button.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-inprogress {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .badge-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-complete {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .task-card h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .task-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding-left: 30px;
+            margin-bottom: 20px;
+            border-left: 3px solid #2a5298;
+            padding-bottom: 15px;
+        }
+
+        .timeline-item:last-child {
+            border-left: 3px solid transparent;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #2a5298;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Task Management System</h1>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'create-task')">Create Task</button>
+            <button class="tab-button" onclick="openTab(event, 'all-tasks')">All Tasks</button>
+            <button class="tab-button" onclick="openTab(event, 'deadlines')">Deadlines</button>
+        </div>
+
+        <!-- Create Task Tab -->
+        <div id="create-task" class="tab-content active">
+            <div class="section">
+                <h2>Create Event Task/Deadline</h2>
+                <p style="color: #666; margin-bottom: 20px;">Assign tasks and deadlines for event organization</p>
+                
+                <div id="successMessage" class="success-message">Task created successfully!</div>
+
+                <form id="taskForm" onsubmit="handleCreateTask(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Task Title <span style="color: red;">*</span></label>
+                            <input type="text" id="taskTitle" placeholder="e.g., Arrange Sound System" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Event <span style="color: red;">*</span></label>
+                            <select id="eventSelect" required>
+                                <option value="">-- Select Event --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="taskDescription" placeholder="Provide details about this task..."></textarea>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Assigned Organization <span style="color: red;">*</span></label>
+                            <select id="assignOrganization" required>
+                                <option value="">-- Select Organization --</option>
+                                <optgroup label="Clubs (12)">
+                                    <option value="Athflex">Athflex</option>
+                                    <option value="Mezzo">Mezzo</option>
+                                    <option value="TedEx">TedEx</option>
+                                    <option value="ARC">ARC</option>
+                                    <option value="IRC">IRC</option>
+                                    <option value="MRC">MRC</option>
+                                    <option value="Finacea">Finacea</option>
+                                    <option value="Tassavur">Tassavur</option>
+                                    <option value="Mercatus">Mercatus</option>
+                                    <option value="Opuskriya">Opuskriya</option>
+                                    <option value="Insightx">Insightx</option>
+                                    <option value="Synergy">Synergy</option>
+                                </optgroup>
+                                <optgroup label="Committees (8)">
+                                    <option value="Student Council">Student Council</option>
+                                    <option value="CommWing">CommWing</option>
+                                    <option value="Athena">Athena</option>
+                                    <option value="Altius">Altius</option>
+                                    <option value="Impelz">Impelz</option>
+                                    <option value="Pahel">Pahel</option>
+                                    <option value="Antragna">Antragna</option>
+                                    <option value="Prarambh">Prarambh</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assigned To (Person Name) <span style="color: red;">*</span></label>
+                            <input type="text" id="assignedTo" placeholder="Team member name" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Due Date <span style="color: red;">*</span></label>
+                            <input type="datetime-local" id="dueDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority <span style="color: red;">*</span></label>
+                            <select id="priority" required>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Create Task</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- All Tasks Tab -->
+        <div id="all-tasks" class="tab-content">
+            <div class="section">
+                <h2>All Tasks</h2>
+                <table id="allTasksTable">
+                    <tr>
+                        <th>Task</th>
+                        <th>Event</th>
+                        <th>Organization</th>
+                        <th>Assigned To</th>
+                        <th>Due Date</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </table>
+                <div class="empty-state" id="noTasks" style="display: none;">No tasks created yet</div>
+            </div>
+        </div>
+
+        <!-- Deadlines Tab -->
+        <div id="deadlines" class="tab-content">
+            <div class="section">
+                <h2>Upcoming Deadlines</h2>
+                <p style="color: #666; margin-bottom: 20px;">Tasks due in the next 7 days</p>
+                <div id="deadlinesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'eventManagementData';
+        const TASKS_KEY = 'taskManagementData';
+
+        window.onload = function() {
+            initializeStorage();
+            loadEventsDropdown();
+            refreshTasks();
+        };
+
+        function initializeStorage() {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
+            }
+            if (!localStorage.getItem(TASKS_KEY)) {
+                localStorage.setItem(TASKS_KEY, JSON.stringify({ tasks: [] }));
+            }
+        }
+
+        function loadEventsDropdown() {
+            const eventData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [] };
+            const select = document.getElementById('eventSelect');
+            const approvedEvents = eventData.events.filter(e => e.status === 'APPROVED');
+
+            approvedEvents.forEach(event => {
+                const option = document.createElement('option');
+                option.value = event.id;
+                option.textContent = event.title + ' (' + event.organization + ')';
+                select.appendChild(option);
+            });
+        }
+
+        function loadTaskData() {
+            return JSON.parse(localStorage.getItem(TASKS_KEY)) || { tasks: [] };
+        }
+
+        function saveTaskData(data) {
+            localStorage.setItem(TASKS_KEY, JSON.stringify(data));
+        }
+
+        function handleCreateTask(event) {
+            event.preventDefault();
+
+            const eventData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [] };
+            const selectedEventId = document.getElementById('eventSelect').value;
+            const selectedEvent = eventData.events.find(e => e.id == selectedEventId);
+
+            const taskData = loadTaskData();
+            const newTask = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                eventId: selectedEventId,
+                eventTitle: selectedEvent ? selectedEvent.title : 'Unknown Event',
+                description: document.getElementById('taskDescription').value,
+                organization: document.getElementById('assignOrganization').value,
+                assignedTo: document.getElementById('assignedTo').value,
+                dueDate: document.getElementById('dueDate').value,
+                priority: document.getElementById('priority').value,
+                status: 'PENDING',
+                createdAt: new Date().toLocaleString()
+            };
+
+            taskData.tasks.push(newTask);
+            saveTaskData(taskData);
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            document.getElementById('taskForm').reset();
+            refreshTasks();
+        }
+
+        function refreshTasks() {
+            const taskData = loadTaskData();
+            const tasks = taskData.tasks || [];
+
+            if (tasks.length === 0) {
+                document.getElementById('allTasksTable').style.display = 'none';
+                document.getElementById('noTasks').style.display = 'block';
+            } else {
+                document.getElementById('noTasks').style.display = 'none';
+                document.getElementById('allTasksTable').style.display = 'table';
+
+                let html = '<tr><th>Task</th><th>Event</th><th>Organization</th><th>Assigned To</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Actions</th></tr>';
+
+                tasks.forEach(task => {
+                    const dueDate = new Date(task.dueDate);
+                    const today = new Date();
+                    const isOverdue = dueDate < today && task.status !== 'COMPLETED';
+                    const statusBadge = isOverdue ? 'badge-overdue' : 
+                                      task.status === 'COMPLETED' ? 'badge-completed' :
+                                      task.status === 'INPROGRESS' ? 'badge-inprogress' : 'badge-pending';
+
+                    html += `
+                        <tr>
+                            <td>${task.title}</td>
+                            <td>${task.eventTitle}</td>
+                            <td>${task.organization}</td>
+                            <td>${task.assignedTo}</td>
+                            <td>${dueDate.toLocaleDateString()}</td>
+                            <td>${task.priority}</td>
+                            <td><span class="badge ${statusBadge}">${task.status}</span></td>
+                            <td>
+                                ${task.status !== 'COMPLETED' ? `<button class="btn btn-complete" onclick="completeTask(${task.id})">Complete</button>` : ''}
+                                <button class="btn btn-delete" onclick="deleteTask(${task.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('allTasksTable').innerHTML = html;
+            }
+
+            // Update deadlines
+            const upcomingTasks = tasks.filter(task => {
+                const dueDate = new Date(task.dueDate);
+                const today = new Date();
+                const daysUntilDue = (dueDate - today) / (1000 * 60 * 60 * 24);
+                return daysUntilDue <= 7 && daysUntilDue > 0 && task.status !== 'COMPLETED';
+            }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            let deadlineHtml = '';
+            if (upcomingTasks.length === 0) {
+                deadlineHtml = '<div class="empty-state">No upcoming deadlines</div>';
+            } else {
+                deadlineHtml = '<div class="timeline">';
+                upcomingTasks.forEach(task => {
+                    const daysLeft = Math.ceil((new Date(task.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                    deadlineHtml += `
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="task-card">
+                                <h4>${task.title}</h4>
+                                <p><strong>Event:</strong> ${task.eventTitle}</p>
+                                <p><strong>Assigned To:</strong> ${task.assignedTo} (${task.organization})</p>
+                                <p><strong>Due:</strong> ${new Date(task.dueDate).toLocaleDateString()} - ${daysLeft} days left</p>
+                                <span class="badge badge-pending">${task.priority} Priority</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                deadlineHtml += '</div>';
+            }
+
+            document.getElementById('deadlinesList').innerHTML = deadlineHtml;
+        }
+
+        function completeTask(taskId) {
+            const taskData = loadTaskData();
+            const task = taskData.tasks.find(t => t.id === taskId);
+
+            if (task) {
+                task.status = 'COMPLETED';
+                task.completedAt = new Date().toLocaleString();
+                saveTaskData(taskData);
+                refreshTasks();
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Delete this task?')) {
+                const taskData = loadTaskData();
+                taskData.tasks = taskData.tasks.filter(t => t.id !== taskId);
+                saveTaskData(taskData);
+                refreshTasks();
+            }
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
