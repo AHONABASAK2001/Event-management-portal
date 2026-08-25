@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Dashboard - Event Management Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+
+        .user-info p {
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .tab-button:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-button.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-top: 4px solid #2a5298;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .event-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .event-card h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .event-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #0099cc;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #0077aa;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+
+            .nav-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Club & Committee Dashboard</h1>
+        <div class="nav-right">
+            <div class="user-info">
+                <p id="userOrg"></p>
+                <p id="userEmail"></p>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'overview')">Overview</button>
+            <button class="tab-button" onclick="openTab(event, 'create-event')">Create Event</button>
+            <button class="tab-button" onclick="openTab(event, 'my-events')">My Events</button>
+            <button class="tab-button" onclick="openTab(event, 'tasks')">Tasks & Deadlines</button>
+            <button class="tab-button" onclick="openTab(event, 'communication')">Communication</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Events</h3>
+                    <div class="number" id="totalEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Approvals</h3>
+                    <div class="number" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Approved Events</h3>
+                    <div class="number" id="approvedCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Tasks</h3>
+                    <div class="number" id="pendingTasks">0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Recent Events</h2>
+                <div id="recentEventsList"></div>
+            </div>
+
+            <div class="section">
+                <h2>Upcoming Tasks & Deadlines</h2>
+                <div id="upcomingTasksList"></div>
+            </div>
+        </div>
+
+        <!-- Create Event Tab -->
+        <div id="create-event" class="tab-content">
+            <div class="section">
+                <h2>Create Event Proposal</h2>
+                <div id="successMessage" class="success-message">Event created successfully!</div>
+
+                <form id="eventForm" onsubmit="handleCreateEvent(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Event Title <span style="color: red;">*</span></label>
+                            <input type="text" id="eventTitle" placeholder="e.g., Annual Workshop" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Event Date <span style="color: red;">*</span></label>
+                            <input type="datetime-local" id="eventDate" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Venue <span style="color: red;">*</span></label>
+                            <input type="text" id="eventVenue" placeholder="e.g., Auditorium A" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Capacity <span style="color: red;">*</span></label>
+                            <input type="number" id="eventCapacity" placeholder="Max attendees" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description <span style="color: red;">*</span></label>
+                        <textarea id="eventDescription" placeholder="Describe your event..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration (minutes) <span style="color: red;">*</span></label>
+                        <input type="number" id="eventDuration" placeholder="e.g., 120" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Create Event</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- My Events Tab -->
+        <div id="my-events" class="tab-content">
+            <div class="section">
+                <h2>My Organization's Events</h2>
+                <div id="myEventsList"></div>
+            </div>
+        </div>
+
+        <!-- Tasks & Deadlines Tab -->
+        <div id="tasks" class="tab-content">
+            <div class="section">
+                <h2>Assigned Tasks & Deadlines</h2>
+                <p style="color: #666; margin-bottom: 20px;">Track event-related tasks, checklists, and deadlines for your organization</p>
+                <div id="tasksList"></div>
+            </div>
+        </div>
+
+        <!-- Communication Tab -->
+        <div id="communication" class="tab-content">
+            <div class="section">
+                <h2>Cross-Committee Communication</h2>
+                <p style="color: #666; margin-bottom: 20px;">Collaborate and share updates with other committees on shared events</p>
+                <div id="communicationList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CURRENT_USER_KEY = 'currentClubUser';
+        const STORAGE_KEY = 'eventManagementData';
+        const TASKS_KEY = 'taskManagementData';
+        const COMMUNICATION_KEY = 'communicationData';
+
+        // Initialize on page load
+        window.onload = function() {
+            checkLogin();
+            loadUserInfo();
+            initializeStorage();
+            refreshDashboard();
+        };
+
+        function checkLogin() {
+            const user = localStorage.getItem(CURRENT_USER_KEY);
+            if (!user) {
+                window.location.href = 'club-login.html';
+            }
+        }
+
+        function loadUserInfo() {
+            const user = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+            document.getElementById('userOrg').textContent = user.organization;
+            document.getElementById('userEmail').textContent = user.email;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem(CURRENT_USER_KEY);
+            window.location.href = 'index.html';
+        }
+
+        function initializeStorage() {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
+            }
+            if (!localStorage.getItem(TASKS_KEY)) {
+                localStorage.setItem(TASKS_KEY, JSON.stringify({ tasks: [] }));
+            }
+            if (!localStorage.getItem(COMMUNICATION_KEY)) {
+                localStorage.setItem(COMMUNICATION_KEY, JSON.stringify({ messages: [] }));
+            }
+        }
+
+        function loadData() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [], registrations: [] };
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function handleCreateEvent(event) {
+            event.preventDefault();
+
+            const user = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+            const data = loadData();
+
+            const newEvent = {
+                id: Date.now(),
+                title: document.getElementById('eventTitle').value,
+                organization: user.organization,
+                description: document.getElementById('eventDescription').value,
+                date: document.getElementById('eventDate').value,
+                venue: document.getElementById('eventVenue').value,
+                capacity: parseInt(document.getElementById('eventCapacity').value),
+                duration: parseInt(document.getElementById('eventDuration').value),
+                status: 'DRAFT',
+                createdAt: new Date().toLocaleString(),
+                createdBy: user.name,
+                registrations: 0
+            };
+
+            data.events.push(newEvent);
+            saveData(data);
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            document.getElementById('eventForm').reset();
+            refreshDashboard();
+        }
+
+        function refreshDashboard() {
+            const user = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+            const data = loadData();
+
+            // Filter events for this organization
+            const orgEvents = data.events.filter(e => e.organization === user.organization);
+
+            // Update stats
+            document.getElementById('totalEvents').textContent = orgEvents.length;
+            document.getElementById('pendingCount').textContent = orgEvents.filter(e => e.status === 'DRAFT' || e.status === 'SUBMITTED').length;
+            document.getElementById('approvedCount').textContent = orgEvents.filter(e => e.status === 'APPROVED').length;
+
+            // Recent events
+            let html = '';
+            if (orgEvents.length === 0) {
+                html = '<div class="empty-state">No events created yet</div>';
+            } else {
+                orgEvents.slice(-5).reverse().forEach(evt => {
+                    html += `
+                        <div class="event-card">
+                            <h4>${evt.title}</h4>
+                            <p>Date: ${new Date(evt.date).toLocaleDateString()}</p>
+                            <p>Venue: ${evt.venue} | Capacity: ${evt.capacity}</p>
+                            <span class="badge ${
+                                evt.status === 'DRAFT' ? 'badge-draft' :
+                                evt.status === 'SUBMITTED' || evt.status === 'FACULTY_REVIEW' ? 'badge-pending' :
+                                evt.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected'
+                            }">${evt.status}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('recentEventsList').innerHTML = html;
+
+            // My events list
+            let myEventsHtml = '';
+            if (orgEvents.length === 0) {
+                myEventsHtml = '<div class="empty-state">No events created yet</div>';
+            } else {
+                myEventsHtml = '<table><tr><th>Title</th><th>Date</th><th>Venue</th><th>Status</th><th>Action</th></tr>';
+                orgEvents.forEach(evt => {
+                    myEventsHtml += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.venue}</td>
+                            <td><span class="badge ${
+                                evt.status === 'DRAFT' ? 'badge-draft' :
+                                evt.status === 'SUBMITTED' || evt.status === 'FACULTY_REVIEW' ? 'badge-pending' :
+                                evt.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected'
+                            }">${evt.status}</span></td>
+                            <td><button class="btn btn-view" onclick="viewEvent(${evt.id})">View</button></td>
+                        </tr>
+                    `;
+                });
+                myEventsHtml += '</table>';
+            }
+            document.getElementById('myEventsList').innerHTML = myEventsHtml;
+
+            // Load tasks
+            const tasksData = JSON.parse(localStorage.getItem(TASKS_KEY)) || { tasks: [] };
+            const orgTasks = tasksData.tasks.filter(t => t.organization === user.organization && t.status !== 'COMPLETED');
+            document.getElementById('pendingTasks').textContent = orgTasks.length;
+
+            let tasksHtml = '';
+            if (orgTasks.length === 0) {
+                tasksHtml = '<div class="empty-state">No pending tasks</div>';
+            } else {
+                tasksHtml = '<table><tr><th>Task</th><th>Event</th><th>Due Date</th><th>Status</th><th>Owner</th></tr>';
+                orgTasks.forEach(task => {
+                    tasksHtml += `
+                        <tr>
+                            <td>${task.title}</td>
+                            <td>${task.eventTitle}</td>
+                            <td>${new Date(task.dueDate).toLocaleDateString()}</td>
+                            <td><span class="badge badge-pending">${task.status}</span></td>
+                            <td>${task.assignedTo}</td>
+                        </tr>
+                    `;
+                });
+                tasksHtml += '</table>';
+            }
+            document.getElementById('tasksList').innerHTML = tasksHtml;
+
+            // Load communication
+            const commData = JSON.parse(localStorage.getItem(COMMUNICATION_KEY)) || { messages: [] };
+            let commHtml = '<div class="empty-state">No messages yet. Start collaborating with other committees!</div>';
+            document.getElementById('communicationList').innerHTML = commHtml;
+        }
+
+        function viewEvent(eventId) {
+            alert('Event details: ' + eventId);
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
