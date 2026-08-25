@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Event Management Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-button.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .section h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-top: 4px solid #2a5298;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #333;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+        }
+
+        .btn-view {
+            background: #0099cc;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #0077aa;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        }
+
+        .event-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .event-card h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .event-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-box.warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+
+            .nav-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Admin Dashboard</h1>
+        <div class="nav-right">
+            <div class="user-info">
+                <p>Administrator</p>
+                <p id="adminEmail"></p>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'overview')">Overview</button>
+            <button class="tab-button" onclick="openTab(event, 'approvals')">Event Approvals</button>
+            <button class="tab-button" onclick="openTab(event, 'calendar')">Calendar & Conflicts</button>
+            <button class="tab-button" onclick="openTab(event, 'organizations')">Organizations</button>
+            <button class="tab-button" onclick="openTab(event, 'analytics')">Analytics</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Events</h3>
+                    <div class="number" id="totalEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Approvals</h3>
+                    <div class="number" id="pendingApprovals">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Approved Events</h3>
+                    <div class="number" id="approvedEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Organizations</h3>
+                    <div class="number" id="activeOrgs">0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Calendar Conflicts Alert</h2>
+                <div id="conflictAlerts"></div>
+            </div>
+
+            <div class="section">
+                <h2>Pending Actions</h2>
+                <div id="pendingActionsList"></div>
+            </div>
+        </div>
+
+        <!-- Event Approvals Tab -->
+        <div id="approvals" class="tab-content">
+            <div class="section">
+                <h2>Event Approval Workflow</h2>
+                <p style="color: #666; margin-bottom: 20px;">Review and approve event proposals from clubs and committees</p>
+
+                <div id="successMessage" class="success-message"></div>
+                <div id="errorMessage" class="error-message"></div>
+
+                <h3 style="margin-top: 30px;">Pending Approvals (Faculty Level)</h3>
+                <div id="facultyApprovalsList"></div>
+
+                <h3 style="margin-top: 30px;">Pending Dean Approval</h3>
+                <div id="deanApprovalsList"></div>
+            </div>
+        </div>
+
+        <!-- Calendar & Conflicts Tab -->
+        <div id="calendar" class="tab-content">
+            <div class="section">
+                <h2>Event Calendar & Conflict Detection</h2>
+                
+                <div id="conflictWarnings"></div>
+
+                <h3 style="margin-top: 20px;">All Approved Events</h3>
+                <table id="allEventsTable">
+                    <tr>
+                        <th>Event Title</th>
+                        <th>Organization</th>
+                        <th>Date</th>
+                        <th>Venue</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                    </tr>
+                </table>
+                <div class="empty-state" id="noEvents" style="display: none;">No approved events yet</div>
+            </div>
+        </div>
+
+        <!-- Organizations Tab -->
+        <div id="organizations" class="tab-content">
+            <div class="section">
+                <h2>Registered Organizations</h2>
+                <p style="color: #666; margin-bottom: 20px;">View all 20 clubs and committees</p>
+
+                <table id="organizationsTable">
+                    <tr>
+                        <th>Organization Name</th>
+                        <th>Type</th>
+                        <th>Total Events</th>
+                        <th>Approved Events</th>
+                        <th>Pending Approvals</th>
+                    </tr>
+                </table>
+                <div class="empty-state" id="noOrgs" style="display: none;">No organizations yet</div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="section">
+                <h2>Event Analytics & Reports</h2>
+
+                <div class="grid-2">
+                    <div>
+                        <h3>Event Status Distribution</h3>
+                        <table style="margin-top: 15px;">
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                            </tr>
+                            <tr>
+                                <td>Draft</td>
+                                <td id="draftCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Submitted</td>
+                                <td id="submittedCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Approved</td>
+                                <td id="approvedCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Rejected</td>
+                                <td id="rejectedCount">0</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h3>Organization Activity</h3>
+                        <table style="margin-top: 15px;" id="orgActivityTable">
+                            <tr>
+                                <th>Organization</th>
+                                <th>Events</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_KEY = 'currentAdminUser';
+        const STORAGE_KEY = 'eventManagementData';
+        const TASKS_KEY = 'taskManagementData';
+
+        window.onload = function() {
+            checkLogin();
+            loadAdminInfo();
+            initializeStorage();
+            refreshDashboard();
+        };
+
+        function checkLogin() {
+            const admin = localStorage.getItem(ADMIN_KEY);
+            if (!admin) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        function loadAdminInfo() {
+            const admin = JSON.parse(localStorage.getItem(ADMIN_KEY));
+            document.getElementById('adminEmail').textContent = admin.email;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem(ADMIN_KEY);
+            window.location.href = 'index.html';
+        }
+
+        function initializeStorage() {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
+            }
+            if (!localStorage.getItem(TASKS_KEY)) {
+                localStorage.setItem(TASKS_KEY, JSON.stringify({ tasks: [] }));
+            }
+        }
+
+        function loadData() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [], registrations: [] };
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function refreshDashboard() {
+            const data = loadData();
+            const allEvents = data.events || [];
+
+            // Update stats
+            document.getElementById('totalEvents').textContent = allEvents.length;
+            document.getElementById('pendingApprovals').textContent = 
+                allEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
+            document.getElementById('approvedEvents').textContent = 
+                allEvents.filter(e => e.status === 'APPROVED').length;
+
+            // Get unique organizations
+            const orgs = [...new Set(allEvents.map(e => e.organization))];
+            document.getElementById('activeOrgs').textContent = orgs.length;
+
+            // Check for conflicts
+            detectConflicts();
+
+            // Update approval lists
+            refreshApprovals();
+
+            // Update calendar
+            refreshCalendar();
+
+            // Update organizations
+            refreshOrganizations();
+
+            // Update analytics
+            refreshAnalytics();
+        }
+
+        function detectConflicts() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+            const conflicts = [];
+
+            for (let i = 0; i < approvedEvents.length; i++) {
+                for (let j = i + 1; j < approvedEvents.length; j++) {
+                    const event1 = approvedEvents[i];
+                    const event2 = approvedEvents[j];
+
+                    if (event1.venue === event2.venue) {
+                        const date1 = new Date(event1.date);
+                        const date2 = new Date(event2.date);
+                        const timeDiff = Math.abs(date1 - date2) / (1000 * 60); // in minutes
+
+                        if (timeDiff < (event1.duration || 120)) {
+                            conflicts.push({
+                                event1: event1.title,
+                                event2: event2.title,
+                                venue: event1.venue,
+                                date: date1.toLocaleDateString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            let html = '';
+            if (conflicts.length === 0) {
+                html = '<div style="color: #28a745; padding: 15px; background: #d4edda; border-radius: 5px;">No calendar conflicts detected</div>';
+            } else {
+                html = '<div class="alert-box warning">';
+                conflicts.forEach(conflict => {
+                    html += `
+                        <p>Conflict: "${conflict.event1}" and "${conflict.event2}" 
+                        both on ${conflict.date} at ${conflict.venue}</p>
+                    `;
+                });
+                html += '</div>';
+            }
+            document.getElementById('conflictAlerts').innerHTML = html;
+            document.getElementById('conflictWarnings').innerHTML = html;
+        }
+
+        function refreshApprovals() {
+            const data = loadData();
+            
+            // Faculty approval level
+            const facultyPending = data.events.filter(e => e.status === 'SUBMITTED');
+            let facultyHtml = '';
+            
+            if (facultyPending.length === 0) {
+                facultyHtml = '<div class="empty-state">No events pending faculty review</div>';
+            } else {
+                facultyHtml = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Submitted</th><th>Actions</th></tr>';
+                facultyPending.forEach(evt => {
+                    facultyHtml += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.createdAt}</td>
+                            <td>
+                                <button class="btn btn-approve" onclick="approveEvent(${evt.id}, 'FACULTY')">Approve</button>
+                                <button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                facultyHtml += '</table>';
+            }
+            document.getElementById('facultyApprovalsList').innerHTML = facultyHtml;
+
+            // Dean approval level
+            const deanPending = data.events.filter(e => e.status === 'FACULTY_REVIEW');
+            let deanHtml = '';
+            
+            if (deanPending.length === 0) {
+                deanHtml = '<div class="empty-state">No events pending dean review</div>';
+            } else {
+                deanHtml = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Faculty Approved</th><th>Actions</th></tr>';
+                deanPending.forEach(evt => {
+                    deanHtml += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.createdAt}</td>
+                            <td>
+                                <button class="btn btn-approve" onclick="approveEvent(${evt.id}, 'DEAN')">Approve</button>
+                                <button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                deanHtml += '</table>';
+            }
+            document.getElementById('deanApprovalsList').innerHTML = deanHtml;
+        }
+
+        function approveEvent(eventId, level) {
+            const data = loadData();
+            const event = data.events.find(e => e.id === eventId);
+
+            if (event) {
+                if (level === 'FACULTY') {
+                    event.status = 'FACULTY_REVIEW';
+                } else if (level === 'DEAN') {
+                    event.status = 'APPROVED';
+                }
+                saveData(data);
+                showSuccess('Event approved successfully!');
+                refreshDashboard();
+            }
+        }
+
+        function rejectEvent(eventId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                const data = loadData();
+                const event = data.events.find(e => e.id === eventId);
+
+                if (event) {
+                    event.status = 'REJECTED';
+                    event.rejectionReason = reason;
+                    saveData(data);
+                    showSuccess('Event rejected');
+                    refreshDashboard();
+                }
+            }
+        }
+
+        function refreshCalendar() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+
+            if (approvedEvents.length === 0) {
+                document.getElementById('allEventsTable').style.display = 'none';
+                document.getElementById('noEvents').style.display = 'block';
+            } else {
+                document.getElementById('noEvents').style.display = 'none';
+                document.getElementById('allEventsTable').style.display = 'table';
+
+                let html = '<tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Venue</th><th>Capacity</th><th>Status</th></tr>';
+                approvedEvents.forEach(evt => {
+                    html += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.venue}</td>
+                            <td>${evt.capacity}</td>
+                            <td><span class="badge badge-approved">Approved</span></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('allEventsTable').innerHTML = html;
+            }
+        }
+
+        function refreshOrganizations() {
+            const data = loadData();
+            const orgNames = [
+                'Athflex', 'Mezzo', 'TedEx', 'ARC', 'IRC', 'MRC',
+                'Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy',
+                'Student Council', 'CommWing', 'Athena', 'Altius', 'Impelz', 'Pahel', 'Antragna', 'Prarambh'
+            ];
+
+            let html = '<tr><th>Organization Name</th><th>Type</th><th>Total Events</th><th>Approved Events</th><th>Pending Approvals</th></tr>';
+
+            orgNames.forEach(org => {
+                const orgEvents = data.events.filter(e => e.organization === org);
+                const approved = orgEvents.filter(e => e.status === 'APPROVED').length;
+                const pending = orgEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
+                const type = ['Athflex', 'Mezzo', 'TedEx', 'ARC', 'IRC', 'MRC', 'Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy'].includes(org) ? 'Club' : 'Committee';
+
+                html += `
+                    <tr>
+                        <td>${org}</td>
+                        <td>${type}</td>
+                        <td>${orgEvents.length}</td>
+                        <td>${approved}</td>
+                        <td>${pending}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('organizationsTable').innerHTML = html;
+        }
+
+        function refreshAnalytics() {
+            const data = loadData();
+            const allEvents = data.events || [];
+
+            document.getElementById('draftCount').textContent = allEvents.filter(e => e.status === 'DRAFT').length;
+            document.getElementById('submittedCount').textContent = allEvents.filter(e => e.status === 'SUBMITTED').length;
+            document.getElementById('approvedCount').textContent = allEvents.filter(e => e.status === 'APPROVED').length;
+            document.getElementById('rejectedCount').textContent = allEvents.filter(e => e.status === 'REJECTED').length;
+
+            // Organization activity
+            const orgs = [...new Set(allEvents.map(e => e.organization))];
+            let orgHtml = '<tr><th>Organization</th><th>Events</th></tr>';
+            orgs.forEach(org => {
+                const count = allEvents.filter(e => e.organization === org).length;
+                orgHtml += `<tr><td>${org}</td><td>${count}</td></tr>`;
+            });
+            document.getElementById('orgActivityTable').innerHTML = orgHtml;
+        }
+
+        function showSuccess(message) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = message;
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            const msg = document.getElementById('errorMessage');
+            msg.textContent = message;
+            msg.style.display = 'block';
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
