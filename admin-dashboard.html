@@ -31,24 +31,97 @@
             font-weight: 700;
         }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .user-info {
             text-align: right;
-        }
-
-        .user-info p {
             font-size: 0.9em;
-            opacity: 0.9;
         }
 
-        .user-role {
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: 600;
-            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-button.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .section h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.2em;
         }
 
         .stats {
@@ -79,22 +152,6 @@
             font-size: 2.5em;
             font-weight: bold;
             color: #1e3c72;
-        }
-
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .section h2 {
-            color: #1e3c72;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #2a5298;
-            padding-bottom: 10px;
-            font-size: 1.5em;
         }
 
         table {
@@ -129,9 +186,9 @@
             display: inline-block;
         }
 
-        .badge-approved {
-            background: #d4edda;
-            color: #155724;
+        .badge-draft {
+            background: #f0f0f0;
+            color: #666;
         }
 
         .badge-pending {
@@ -139,9 +196,19 @@
             color: #856404;
         }
 
+        .badge-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
         .badge-rejected {
             background: #f8d7da;
             color: #721c24;
+        }
+
+        .badge-completed {
+            background: #d1ecf1;
+            color: #0c5460;
         }
 
         .btn {
@@ -151,8 +218,8 @@
             cursor: pointer;
             font-size: 0.9em;
             font-weight: 600;
-            transition: all 0.3s ease;
             margin-right: 5px;
+            transition: all 0.3s ease;
         }
 
         .btn-approve {
@@ -173,72 +240,19 @@
             background: #c82333;
         }
 
-        .btn-disabled {
-            background: #ccc;
-            color: #666;
-            cursor: not-allowed;
-        }
-
-        .btn-disabled:hover {
-            background: #ccc;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-            font-family: inherit;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #2a5298;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        .btn-view {
+            background: #0099cc;
             color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            font-size: 1em;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        .btn-view:hover {
+            background: #0077aa;
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
         }
 
         .success-message {
@@ -251,341 +265,412 @@
             display: none;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-box.warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
         }
 
         @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
+            .tabs {
+                flex-wrap: wrap;
             }
 
-            .navbar {
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+
+            .nav-right {
                 flex-direction: column;
-                text-align: center;
-            }
-
-            .user-info {
-                text-align: center;
-                margin-top: 10px;
+                align-items: flex-end;
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>Event Management Portal</h1>
-        <div class="user-info">
-            <p class="user-role" id="userRole">Admin User</p>
-            <p>Administrator</p>
+        <h1>Admin Dashboard</h1>
+        <div class="nav-right">
+            <div class="user-info">
+                <p>Administrator</p>
+                <p id="adminEmail"></p>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
     </div>
 
     <div class="container">
-        <div class="stats">
-            <div class="stat-card">
-                <h3>Total Events</h3>
-                <div class="number" id="totalEvents">0</div>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'overview')">Overview</button>
+            <button class="tab-button" onclick="openTab(event, 'approvals')">Event Approvals</button>
+            <button class="tab-button" onclick="openTab(event, 'calendar')">Calendar & Conflicts</button>
+            <button class="tab-button" onclick="openTab(event, 'organizations')">Organizations</button>
+            <button class="tab-button" onclick="openTab(event, 'analytics')">Analytics</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Events</h3>
+                    <div class="number" id="totalEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Approvals</h3>
+                    <div class="number" id="pendingApprovals">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Approved Events</h3>
+                    <div class="number" id="approvedEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Organizations</h3>
+                    <div class="number" id="activeOrgs">0</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Pending Approvals</h3>
-                <div class="number" id="pendingCount">0</div>
+
+            <div class="section">
+                <h2>Calendar Conflicts Alert</h2>
+                <div id="conflictAlerts"></div>
             </div>
-            <div class="stat-card">
-                <h3>Approved Events</h3>
-                <div class="number" id="approvedCount">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Registrations</h3>
-                <div class="number" id="registrationCount">0</div>
+
+            <div class="section">
+                <h2>Pending Actions</h2>
+                <div id="pendingActionsList"></div>
             </div>
         </div>
 
-        <!-- Create Event Form -->
-        <div class="section">
-            <h2>Create New Event</h2>
-            <div id="successMessage" class="success-message">Event created successfully!</div>
-            <form id="eventForm" onsubmit="handleCreateEvent(event)">
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Event Title <span style="color: red;">*</span></label>
-                        <input type="text" id="eventTitle" placeholder="e.g., Annual Workshop" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Organizing Body <span style="color: red;">*</span></label>
-                        <select id="organization" required>
-                            <option value="">-- Select Organization --</option>
-                            <option value="Athflex">Athflex</option>
-                            <option value="Placement Committee">Placement Committee</option>
-                            <option value="Mezzo">Mezzo</option>
-                            <option value="TedEx">TedEx</option>
-                            <option value="ARC">ARC</option>
-                            <option value="IRC">IRC</option>
-                            <option value="MRC">MRC</option>
-                            <option value="Student Council">Student Council</option>
-                            <option value="Finacea">Finacea</option>
-                            <option value="Tassavur">Tassavur</option>
-                            <option value="Mercatus">Mercatus</option>
-                            <option value="Opuskriya">Opuskriya</option>
-                            <option value="Insightx">Insightx</option>
-                            <option value="Synergy">Synergy</option>
-                            <option value="CommWing">CommWing</option>
-                            <option value="Athena">Athena</option>
-                            <option value="Altius">Altius</option>
-                            <option value="Impelz">Impelz</option>
-                            <option value="Pahel">Pahel</option>
-                            <option value="Antragna">Antragna</option>
-                            <option value="Prarambh">Prarambh</option>
-                        </select>
-                    </div>
-                </div>
+        <!-- Event Approvals Tab -->
+        <div id="approvals" class="tab-content">
+            <div class="section">
+                <h2>Event Approval Workflow</h2>
+                <p style="color: #666; margin-bottom: 20px;">Review and approve event proposals from clubs and committees</p>
 
-                <div class="form-group">
-                    <label>Description <span style="color: red;">*</span></label>
-                    <textarea id="eventDescription" placeholder="Describe your event..." required></textarea>
-                </div>
+                <div id="successMessage" class="success-message"></div>
+                <div id="errorMessage" class="error-message"></div>
 
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Event Date & Time <span style="color: red;">*</span></label>
-                        <input type="datetime-local" id="eventDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Venue <span style="color: red;">*</span></label>
-                        <input type="text" id="eventVenue" placeholder="e.g., Auditorium A" required>
-                    </div>
-                </div>
+                <h3 style="margin-top: 30px;">Pending Approvals (Faculty Level)</h3>
+                <div id="facultyApprovalsList"></div>
 
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Capacity <span style="color: red;">*</span></label>
-                        <input type="number" id="eventCapacity" placeholder="Max attendees" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Duration (minutes) <span style="color: red;">*</span></label>
-                        <input type="number" id="eventDuration" placeholder="e.g., 120" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Create Event</button>
-            </form>
+                <h3 style="margin-top: 30px;">Pending Dean Approval</h3>
+                <div id="deanApprovalsList"></div>
+            </div>
         </div>
 
-        <!-- Pending Approvals -->
-        <div class="section">
-            <h2>Pending Approvals</h2>
-            <div id="pendingTable">
-                <table>
+        <!-- Calendar & Conflicts Tab -->
+        <div id="calendar" class="tab-content">
+            <div class="section">
+                <h2>Event Calendar & Conflict Detection</h2>
+                
+                <div id="conflictWarnings"></div>
+
+                <h3 style="margin-top: 20px;">All Approved Events</h3>
+                <table id="allEventsTable">
                     <tr>
                         <th>Event Title</th>
                         <th>Organization</th>
                         <th>Date</th>
-                        <th>Submitted Date</th>
+                        <th>Venue</th>
+                        <th>Capacity</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </tr>
                 </table>
-                <div class="empty-state" id="noPending" style="display: none;">No pending approvals</div>
+                <div class="empty-state" id="noEvents" style="display: none;">No approved events yet</div>
             </div>
         </div>
 
-        <!-- Upcoming Events -->
-        <div class="section">
-            <h2>Upcoming Events</h2>
-            <table id="upcomingTable">
-                <tr>
-                    <th>Event Title</th>
-                    <th>Organization</th>
-                    <th>Date</th>
-                    <th>Venue</th>
-                    <th>Capacity</th>
-                    <th>Status</th>
-                </tr>
-            </table>
-            <div class="empty-state" id="noUpcoming" style="display: none;">No upcoming events</div>
+        <!-- Organizations Tab -->
+        <div id="organizations" class="tab-content">
+            <div class="section">
+                <h2>Registered Organizations</h2>
+                <p style="color: #666; margin-bottom: 20px;">View all 18 committees and clubs</p>
+
+                <table id="organizationsTable">
+                    <tr>
+                        <th>Organization Name</th>
+                        <th>Type</th>
+                        <th>Total Events</th>
+                        <th>Approved Events</th>
+                        <th>Pending Approvals</th>
+                    </tr>
+                </table>
+                <div class="empty-state" id="noOrgs" style="display: none;">No organizations yet</div>
+            </div>
         </div>
 
-        <!-- Organizations -->
-        <div class="section">
-            <h2>Registered Organizations</h2>
-            <table id="organizationsTable">
-                <tr>
-                    <th>Organization Name</th>
-                    <th>Total Events</th>
-                    <th>Approved Events</th>
-                    <th>Pending Approvals</th>
-                </tr>
-            </table>
-            <div class="empty-state" id="noOrgs" style="display: none;">No organizations yet</div>
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="section">
+                <h2>Event Analytics & Reports</h2>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>Event Status Distribution</h3>
+                        <table style="margin-top: 15px;">
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                            </tr>
+                            <tr>
+                                <td>Draft</td>
+                                <td id="draftCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Submitted</td>
+                                <td id="submittedCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Approved</td>
+                                <td id="approvedCount">0</td>
+                            </tr>
+                            <tr>
+                                <td>Rejected</td>
+                                <td id="rejectedCount">0</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h3>Organization Activity</h3>
+                        <table style="margin-top: 15px;" id="orgActivityTable">
+                            <tr>
+                                <th>Organization</th>
+                                <th>Events</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Storage key
+        const ADMIN_KEY = 'currentAdminUser';
         const STORAGE_KEY = 'eventManagementData';
-        const USER_ROLE_KEY = 'userRole';
+        const TASKS_KEY = 'taskManagementData';
 
-        // Initialize storage
+        window.onload = function() {
+            checkLogin();
+            loadAdminInfo();
+            initializeStorage();
+            refreshDashboard();
+        };
+
+        function checkLogin() {
+            const admin = localStorage.getItem(ADMIN_KEY);
+            if (!admin) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        function loadAdminInfo() {
+            const admin = JSON.parse(localStorage.getItem(ADMIN_KEY));
+            document.getElementById('adminEmail').textContent = admin.email;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem(ADMIN_KEY);
+            window.location.href = 'index.html';
+        }
+
         function initializeStorage() {
             if (!localStorage.getItem(STORAGE_KEY)) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    events: [],
-                    registrations: []
-                }));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
             }
-            
-            // Set user role (for demo, we'll use 'admin')
-            if (!localStorage.getItem(USER_ROLE_KEY)) {
-                localStorage.setItem(USER_ROLE_KEY, 'admin');
+            if (!localStorage.getItem(TASKS_KEY)) {
+                localStorage.setItem(TASKS_KEY, JSON.stringify({ tasks: [] }));
             }
         }
 
-        // Get user role
-        function getUserRole() {
-            return localStorage.getItem(USER_ROLE_KEY) || 'user';
-        }
-
-        // Load data
         function loadData() {
-            const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            return data;
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { events: [], registrations: [] };
         }
 
-        // Save data
         function saveData(data) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
-        // Handle create event
-        function handleCreateEvent(event) {
-            event.preventDefault();
-
-            const data = loadData();
-            const newEvent = {
-                id: Date.now(),
-                title: document.getElementById('eventTitle').value,
-                organization: document.getElementById('organization').value,
-                description: document.getElementById('eventDescription').value,
-                date: document.getElementById('eventDate').value,
-                venue: document.getElementById('eventVenue').value,
-                capacity: parseInt(document.getElementById('eventCapacity').value),
-                duration: parseInt(document.getElementById('eventDuration').value),
-                status: 'PENDING',
-                createdAt: new Date().toLocaleString(),
-                registrations: 0
-            };
-
-            data.events.push(newEvent);
-            saveData(data);
-
-            // Show success message
-            document.getElementById('successMessage').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 3000);
-
-            // Reset form
-            document.getElementById('eventForm').reset();
-
-            // Refresh tables
-            refreshDashboard();
-        }
-
-        // Approve event
-        function approveEvent(eventId) {
-            const userRole = getUserRole();
-            if (userRole !== 'admin') {
-                alert('Only administrators can approve events');
-                return;
-            }
-
-            const data = loadData();
-            const event = data.events.find(e => e.id === eventId);
-            if (event) {
-                event.status = 'APPROVED';
-                saveData(data);
-                refreshDashboard();
-            }
-        }
-
-        // Reject event
-        function rejectEvent(eventId) {
-            const userRole = getUserRole();
-            if (userRole !== 'admin') {
-                alert('Only administrators can reject events');
-                return;
-            }
-
-            const reason = prompt('Enter rejection reason:');
-            if (reason) {
-                const data = loadData();
-                const event = data.events.find(e => e.id === eventId);
-                if (event) {
-                    event.status = 'REJECTED';
-                    event.rejectionReason = reason;
-                    saveData(data);
-                    refreshDashboard();
-                }
-            }
-        }
-
-        // Refresh dashboard
         function refreshDashboard() {
             const data = loadData();
-            const userRole = getUserRole();
+            const allEvents = data.events || [];
 
-            // Update stats
-            document.getElementById('totalEvents').textContent = data.events.length;
-            document.getElementById('pendingCount').textContent = data.events.filter(e => e.status === 'PENDING').length;
-            document.getElementById('approvedCount').textContent = data.events.filter(e => e.status === 'APPROVED').length;
-            document.getElementById('registrationCount').textContent = data.registrations.length;
+            document.getElementById('totalEvents').textContent = allEvents.length;
+            document.getElementById('pendingApprovals').textContent = 
+                allEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
+            document.getElementById('approvedEvents').textContent = 
+                allEvents.filter(e => e.status === 'APPROVED').length;
 
-            // Update pending approvals
-            const pendingEvents = data.events.filter(e => e.status === 'PENDING');
-            const pendingTable = document.getElementById('pendingTable');
-            
-            if (pendingEvents.length === 0) {
-                pendingTable.innerHTML = '<div class="empty-state">No pending approvals</div>';
+            const orgs = [...new Set(allEvents.map(e => e.organization))];
+            document.getElementById('activeOrgs').textContent = orgs.length;
+
+            detectConflicts();
+            refreshApprovals();
+            refreshCalendar();
+            refreshOrganizations();
+            refreshAnalytics();
+        }
+
+        function detectConflicts() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+            const conflicts = [];
+
+            for (let i = 0; i < approvedEvents.length; i++) {
+                for (let j = i + 1; j < approvedEvents.length; j++) {
+                    const event1 = approvedEvents[i];
+                    const event2 = approvedEvents[j];
+
+                    if (event1.venue === event2.venue) {
+                        const date1 = new Date(event1.date);
+                        const date2 = new Date(event2.date);
+                        const timeDiff = Math.abs(date1 - date2) / (1000 * 60);
+
+                        if (timeDiff < (event1.duration || 120)) {
+                            conflicts.push({
+                                event1: event1.title,
+                                event2: event2.title,
+                                venue: event1.venue,
+                                date: date1.toLocaleDateString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            let html = '';
+            if (conflicts.length === 0) {
+                html = '<div style="color: #28a745; padding: 15px; background: #d4edda; border-radius: 5px;">No calendar conflicts detected</div>';
             } else {
-                let html = '<table><tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Submitted Date</th><th>Status</th><th>Action</th></tr>';
-                
-                pendingEvents.forEach(evt => {
-                    const isAdmin = userRole === 'admin';
-                    const approveBtn = isAdmin ? `<button class="btn btn-approve" onclick="approveEvent(${evt.id})">Approve</button>` : '';
-                    const rejectBtn = isAdmin ? `<button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>` : '';
-                    const actionBtns = isAdmin ? approveBtn + rejectBtn : '<span style="color: #999;">View Only</span>';
-                    
-                    html += `
+                html = '<div class="alert-box warning">';
+                conflicts.forEach(conflict => {
+                    html += `<p>Conflict: "${conflict.event1}" and "${conflict.event2}" both on ${conflict.date} at ${conflict.venue}</p>`;
+                });
+                html += '</div>';
+            }
+            document.getElementById('conflictAlerts').innerHTML = html;
+            document.getElementById('conflictWarnings').innerHTML = html;
+        }
+
+        function refreshApprovals() {
+            const data = loadData();
+            
+            const facultyPending = data.events.filter(e => e.status === 'SUBMITTED');
+            let facultyHtml = '';
+            
+            if (facultyPending.length === 0) {
+                facultyHtml = '<div class="empty-state">No events pending faculty review</div>';
+            } else {
+                facultyHtml = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Submitted</th><th>Actions</th></tr>';
+                facultyPending.forEach(evt => {
+                    facultyHtml += `
                         <tr>
                             <td>${evt.title}</td>
                             <td>${evt.organization}</td>
                             <td>${new Date(evt.date).toLocaleDateString()}</td>
                             <td>${evt.createdAt}</td>
-                            <td><span class="badge badge-pending">Pending</span></td>
-                            <td>${actionBtns}</td>
+                            <td>
+                                <button class="btn btn-approve" onclick="approveEvent(${evt.id}, 'FACULTY')">Approve</button>
+                                <button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
                         </tr>
                     `;
                 });
-                
-                html += '</table>';
-                pendingTable.innerHTML = html;
+                facultyHtml += '</table>';
             }
+            document.getElementById('facultyApprovalsList').innerHTML = facultyHtml;
 
-            // Update upcoming events
-            const approvedEvents = data.events.filter(e => e.status === 'APPROVED' && new Date(e.date) > new Date());
-            const upcomingTable = document.getElementById('upcomingTable');
+            const deanPending = data.events.filter(e => e.status === 'FACULTY_REVIEW');
+            let deanHtml = '';
             
-            if (approvedEvents.length === 0) {
-                upcomingTable.style.display = 'none';
-                document.getElementById('noUpcoming').style.display = 'block';
+            if (deanPending.length === 0) {
+                deanHtml = '<div class="empty-state">No events pending dean review</div>';
             } else {
-                document.getElementById('noUpcoming').style.display = 'none';
-                upcomingTable.style.display = 'table';
-                
+                deanHtml = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Faculty Approved</th><th>Actions</th></tr>';
+                deanPending.forEach(evt => {
+                    deanHtml += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.createdAt}</td>
+                            <td>
+                                <button class="btn btn-approve" onclick="approveEvent(${evt.id}, 'DEAN')">Approve</button>
+                                <button class="btn btn-reject" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                deanHtml += '</table>';
+            }
+            document.getElementById('deanApprovalsList').innerHTML = deanHtml;
+        }
+
+        function approveEvent(eventId, level) {
+            const data = loadData();
+            const event = data.events.find(e => e.id === eventId);
+
+            if (event) {
+                if (level === 'FACULTY') {
+                    event.status = 'FACULTY_REVIEW';
+                } else if (level === 'DEAN') {
+                    event.status = 'APPROVED';
+                }
+                saveData(data);
+                showSuccess('Event approved successfully!');
+                refreshDashboard();
+            }
+        }
+
+        function rejectEvent(eventId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                const data = loadData();
+                const event = data.events.find(e => e.id === eventId);
+
+                if (event) {
+                    event.status = 'REJECTED';
+                    event.rejectionReason = reason;
+                    saveData(data);
+                    showSuccess('Event rejected');
+                    refreshDashboard();
+                }
+            }
+        }
+
+        function refreshCalendar() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+
+            if (approvedEvents.length === 0) {
+                document.getElementById('allEventsTable').style.display = 'none';
+                document.getElementById('noEvents').style.display = 'block';
+            } else {
+                document.getElementById('noEvents').style.display = 'none';
+                document.getElementById('allEventsTable').style.display = 'table';
+
                 let html = '<tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Venue</th><th>Capacity</th><th>Status</th></tr>';
-                
                 approvedEvents.forEach(evt => {
                     html += `
                         <tr>
@@ -598,47 +683,77 @@
                         </tr>
                     `;
                 });
-                
-                upcomingTable.innerHTML = html;
-            }
-
-            // Update organizations stats
-            const orgs = [...new Set(data.events.map(e => e.organization))];
-            const orgsTable = document.getElementById('organizationsTable');
-            
-            if (orgs.length === 0) {
-                orgsTable.style.display = 'none';
-                document.getElementById('noOrgs').style.display = 'block';
-            } else {
-                document.getElementById('noOrgs').style.display = 'none';
-                orgsTable.style.display = 'table';
-                
-                let html = '<tr><th>Organization Name</th><th>Total Events</th><th>Approved Events</th><th>Pending Approvals</th></tr>';
-                
-                orgs.forEach(org => {
-                    const orgEvents = data.events.filter(e => e.organization === org);
-                    const approvedCount = orgEvents.filter(e => e.status === 'APPROVED').length;
-                    const pendingCount = orgEvents.filter(e => e.status === 'PENDING').length;
-                    
-                    html += `
-                        <tr>
-                            <td>${org}</td>
-                            <td>${orgEvents.length}</td>
-                            <td>${approvedCount}</td>
-                            <td>${pendingCount}</td>
-                        </tr>
-                    `;
-                });
-                
-                orgsTable.innerHTML = html;
+                document.getElementById('allEventsTable').innerHTML = html;
             }
         }
 
-        // Initialize on page load
-        window.onload = function() {
-            initializeStorage();
-            refreshDashboard();
-        };
+        function refreshOrganizations() {
+            const data = loadData();
+            const orgNames = [
+                'Athflex', 'Mezzo', 'TedEx', 'ARC', 'IRC', 'MRC',
+                'Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy',
+                'CommWing', 'Athena', 'Altius', 'Pahel', 'Antragna', 'Prarambh'
+            ];
+
+            let html = '<tr><th>Organization Name</th><th>Type</th><th>Total Events</th><th>Approved Events</th><th>Pending Approvals</th></tr>';
+
+            orgNames.forEach(org => {
+                const orgEvents = data.events.filter(e => e.organization === org);
+                const approved = orgEvents.filter(e => e.status === 'APPROVED').length;
+                const pending = orgEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
+                const type = ['Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy', 'CommWing', 'Athena', 'Altius', 'Pahel', 'Antragna', 'Prarambh'].includes(org) ? 'Club' : 'Committee';
+
+                html += `
+                    <tr>
+                        <td>${org}</td>
+                        <td>${type}</td>
+                        <td>${orgEvents.length}</td>
+                        <td>${approved}</td>
+                        <td>${pending}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('organizationsTable').innerHTML = html;
+        }
+
+        function refreshAnalytics() {
+            const data = loadData();
+            const allEvents = data.events || [];
+
+            document.getElementById('draftCount').textContent = allEvents.filter(e => e.status === 'DRAFT').length;
+            document.getElementById('submittedCount').textContent = allEvents.filter(e => e.status === 'SUBMITTED').length;
+            document.getElementById('approvedCount').textContent = allEvents.filter(e => e.status === 'APPROVED').length;
+            document.getElementById('rejectedCount').textContent = allEvents.filter(e => e.status === 'REJECTED').length;
+
+            const orgs = [...new Set(allEvents.map(e => e.organization))];
+            let orgHtml = '<tr><th>Organization</th><th>Events</th></tr>';
+            orgs.forEach(org => {
+                const count = allEvents.filter(e => e.organization === org).length;
+                orgHtml += `<tr><td>${org}</td><td>${count}</td></tr>`;
+            });
+            document.getElementById('orgActivityTable').innerHTML = orgHtml;
+        }
+
+        function showSuccess(message) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = message;
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
     </script>
 </body>
 </html>
