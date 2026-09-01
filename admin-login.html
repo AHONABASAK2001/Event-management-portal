@@ -37,13 +37,6 @@
             font-size: 2em;
         }
 
-        .subtitle {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 0.95em;
-        }
-
         .admin-badge {
             display: inline-block;
             background: #2a5298;
@@ -55,6 +48,13 @@
             margin-bottom: 20px;
             text-align: center;
             width: 100%;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.95em;
         }
 
         .form-group {
@@ -82,6 +82,26 @@
             outline: none;
             border-color: #2a5298;
             box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #2a5298;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .toggle-password:hover {
+            color: #1e3c72;
         }
 
         .btn-login {
@@ -157,37 +177,57 @@
     <div class="container">
         <h1>Admin Portal</h1>
         <div class="admin-badge">Administrator Access</div>
-        <p class="subtitle">Login to manage events, approvals, and organization</p>
+        <p class="subtitle">Login with your credentials</p>
 
         <div class="error-message" id="errorMsg"></div>
         <div class="success-message" id="successMsg"></div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="form-group">
-                <label>Admin Email</label>
-                <input type="email" id="email" placeholder="admin@college.edu" required>
+                <label>Admin Email <span style="color: red;">*</span></label>
+                <input type="email" id="email" placeholder="administration@imthyderabad.edu.in" required>
+            </div>
+
+            <div class="form-group password-container">
+                <label>Password <span style="color: red;">*</span></label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <button type="button" class="toggle-password" onclick="togglePassword()">Show</button>
             </div>
 
             <button type="submit" class="btn-login">Login to Admin Dashboard</button>
         </form>
 
         <div class="info-box">
-            <h4>Admin Access</h4>
+            <h4>Admin Access Information</h4>
             <p><strong>Email:</strong> administration@imthyderabad.edu.in</p>
-            <p style="margin-top: 10px; font-size: 0.85em; color: #666;">Enter your email to access the admin portal</p>
+            <p style="margin-top: 10px; font-size: 0.85em; color: #666;">Contact your administrator for login credentials</p>
         </div>
 
         <a href="index.html" class="back-link">Back to Home</a>
     </div>
 
     <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleBtn = document.querySelector('.toggle-password');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                passwordField.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        }
+
         function handleLogin(event) {
             event.preventDefault();
 
             const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            // Verify admin email
-            if (email === 'administration@imthyderabad.edu.in') {
+            // Verify admin credentials
+            if (email === 'administration@imthyderabad.edu.in' && password === 'administration@imt') {
                 const adminData = {
                     email: email,
                     role: 'SUPER_ADMIN',
@@ -201,7 +241,7 @@
                     window.location.href = 'admin-dashboard.html';
                 }, 1500);
             } else {
-                showError('Invalid admin email. Please use administration@imthyderabad.edu.in');
+                showError('Invalid email or password');
             }
         }
 
