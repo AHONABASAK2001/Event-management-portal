@@ -81,6 +81,11 @@
             transition: all 0.3s ease;
         }
 
+        .form-group input::placeholder,
+        .form-group select {
+            color: #999;
+        }
+
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
@@ -235,7 +240,7 @@
                 <input 
                     type="text" 
                     id="erpId" 
-                    placeholder="e.g., A00123456"
+                    placeholder=""
                     required
                 >
             </div>
@@ -257,7 +262,7 @@
                 <input 
                     type="email" 
                     id="studentEmail" 
-                    placeholder="your.email@college.edu"
+                    placeholder="college mail id"
                     required
                 >
             </div>
@@ -268,38 +273,35 @@
                 <input 
                     type="tel" 
                     id="studentPhone" 
-                    placeholder="+91-9999999999"
+                    placeholder="+91"
                     required
                 >
             </div>
 
-            <!-- Department -->
+            <!-- Domain -->
             <div class="form-group required">
-                <label>Department</label>
-                <select id="department" required>
-                    <option value="">-- Select Department --</option>
-                    <option value="Computer Science">Computer Science</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Mechanical">Mechanical</option>
-                    <option value="Civil">Civil</option>
-                    <option value="Management">Management</option>
-                    <option value="Other">Other</option>
+                <label>Domain</label>
+                <select id="domain" required>
+                    <option value="">-- Select Domain --</option>
+                    <option value="PGDM (Core)">PGDM (Core)</option>
+                    <option value="PGDM (Finance)">PGDM (Finance)</option>
+                    <option value="PGDM (Marketing)">PGDM (Marketing)</option>
+                    <option value="PGDM (IT)">PGDM (IT)</option>
+                    <option value="PGDM (LSCM)">PGDM (LSCM)</option>
                 </select>
             </div>
 
-            <!-- Semester -->
+            <!-- Trimester -->
             <div class="form-group required">
-                <label>Semester</label>
-                <select id="semester" required>
-                    <option value="">-- Select Semester --</option>
-                    <option value="1">1st Semester</option>
-                    <option value="2">2nd Semester</option>
-                    <option value="3">3rd Semester</option>
-                    <option value="4">4th Semester</option>
-                    <option value="5">5th Semester</option>
-                    <option value="6">6th Semester</option>
-                    <option value="7">7th Semester</option>
-                    <option value="8">8th Semester</option>
+                <label>Trimester</label>
+                <select id="trimester" required>
+                    <option value="">-- Select Trimester --</option>
+                    <option value="1st Trimester">1st Trimester</option>
+                    <option value="2nd Trimester">2nd Trimester</option>
+                    <option value="3rd Trimester">3rd Trimester</option>
+                    <option value="4th Trimester">4th Trimester</option>
+                    <option value="5th Trimester">5th Trimester</option>
+                    <option value="6th Trimester">6th Trimester</option>
                 </select>
             </div>
 
@@ -419,8 +421,8 @@
             const studentName = document.getElementById('studentName').value;
             const studentEmail = document.getElementById('studentEmail').value;
             const studentPhone = document.getElementById('studentPhone').value;
-            const department = document.getElementById('department').value;
-            const semester = document.getElementById('semester').value;
+            const domain = document.getElementById('domain').value;
+            const trimester = document.getElementById('trimester').value;
             const specialRequirements = document.getElementById('specialRequirements').value;
 
             // Check for duplicate registration
@@ -443,8 +445,8 @@
                 studentName: studentName,
                 studentEmail: studentEmail,
                 studentPhone: studentPhone,
-                department: department,
-                semester: semester,
+                domain: domain,
+                trimester: trimester,
                 specialRequirements: specialRequirements,
                 ticketId: ticketId,
                 registrationDate: new Date().toLocaleString(),
