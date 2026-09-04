@@ -537,7 +537,7 @@
                             <p>Date: ${new Date(event.date).toLocaleDateString()} at ${new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             <p>Venue: ${event.venue}</p>
                             <p>Capacity: ${event.capacity}</p>
-                            <p>Duration: ${event.duration} minutes</p>
+                            <p>Duration: ${(event.duration / 60).toFixed(1)} hours</p>
                             ${isInClash ? '<p style="color: #dc3545; font-weight: 600;">Warning: Venue conflict detected</p>' : ''}
                             <span class="event-badge ${badgeClass}">${isInClash ? 'Conflict' : 'Approved'}</span>
                         </div>
