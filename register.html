@@ -230,7 +230,7 @@
             <p><strong>Venue:</strong> <span id="eventVenue"></span></p>
             <p><strong>Capacity:</strong> <span id="eventCapacity"></span></p>
             <p><strong>Organization:</strong> <span id="eventOrganization"></span></p>
-            <p><strong>Duration:</strong> <span id="eventDuration"></span> hours</p>
+            <p><strong>Duration:</strong> <span id="eventDuration"></span> minutes</p>
         </div>
 
         <form id="registrationForm" onsubmit="handleSubmit(event)">
@@ -394,7 +394,7 @@
                 document.getElementById('eventCapacity').textContent = event.capacity + ' people';
                 document.getElementById('eventOrganization').textContent = event.organization;
                 const durationMins = Number(event.duration || 120);
-document.getElementById('eventDuration').textContent = (durationMins / 60).toFixed(1);
+document.getElementById('eventDuration').textContent = (durationMins);
                 eventBox.style.display = 'block';
             } else {
                 eventBox.style.display = 'none';
