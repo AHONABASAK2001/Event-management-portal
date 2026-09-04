@@ -495,12 +495,19 @@
         }
 
         function refreshDashboard() {
+            console.log('Refreshing dashboard...'); // Debug log
             const data = loadData();
+            console.log('Loaded data:', data); // Debug log
+            
             const allEvents = data.events || [];
+            console.log('All events:', allEvents); // Debug log
 
             // Update stats
             const pendingEvents = allEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW');
             const approvedEvents = allEvents.filter(e => e.status === 'APPROVED');
+
+            console.log('Pending events:', pendingEvents); // Debug log
+            console.log('Approved events:', approvedEvents); // Debug log
 
             document.getElementById('totalEvents').textContent = allEvents.length;
             document.getElementById('pendingApprovals').textContent = pendingEvents.length;
