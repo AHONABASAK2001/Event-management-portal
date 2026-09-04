@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Storage</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        h2 { color: #1e3c72; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        button { padding: 10px 20px; background: #1e3c72; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px 10px 0; }
+        button:hover { background: #0d1f3d; }
+        .clear-btn { background: #dc3545; }
+        .clear-btn:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug Storage</h1>
+        
+        <button onclick="showStorage()">Show All Storage</button>
+        <button onclick="showEvents()">Show Events Only</button>
+        <button class="clear-btn" onclick="clearAll()">Clear All Data</button>
+        <button onclick="location.href='index.html'">Back to Home</button>
+        
+        <h2>Storage Contents:</h2>
+        <pre id="output">Loading...</pre>
+    </div>
+
+    <script>
+        function showStorage() {
+            let output = '';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                output += `${key}:\n${JSON.stringify(JSON.parse(value), null, 2)}\n\n`;
+            }
+            document.getElementById('output').textContent = output || 'Empty Storage';
+        }
+
+        function showEvents() {
+            const data = JSON.parse(localStorage.getItem('eventManagementData') || '{}');
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+
+        function clearAll() {
+            if (confirm('Clear ALL data? This cannot be undone!')) {
+                localStorage.clear();
+                alert('All data cleared!');
+                showStorage();
+            }
+        }
+
+        showStorage();
+    </script>
+</body>
+</html>
