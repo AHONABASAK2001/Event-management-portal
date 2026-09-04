@@ -186,11 +186,6 @@
             display: inline-block;
         }
 
-        .badge-draft {
-            background: #f0f0f0;
-            color: #666;
-        }
-
         .badge-pending {
             background: #fff3cd;
             color: #856404;
@@ -204,11 +199,6 @@
         .badge-rejected {
             background: #f8d7da;
             color: #721c24;
-        }
-
-        .badge-completed {
-            background: #d1ecf1;
-            color: #0c5460;
         }
 
         .btn {
@@ -240,15 +230,6 @@
             background: #c82333;
         }
 
-        .btn-view {
-            background: #0099cc;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #0077aa;
-        }
-
         .btn-small {
             padding: 5px 10px;
             font-size: 0.85em;
@@ -270,20 +251,10 @@
             display: none;
         }
 
-        .error-message {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
         .alert-box {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -293,12 +264,6 @@
             background: #fff3cd;
             border: 1px solid #ffeaa7;
             color: #856404;
-        }
-
-        .alert-box.success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
         }
 
         @media (max-width: 768px) {
@@ -363,13 +328,13 @@
             </div>
 
             <div class="section">
-                <h2>Calendar Conflicts Alert</h2>
-                <div id="conflictAlerts"></div>
+                <h2>Pending Actions</h2>
+                <div id="pendingActionsList"></div>
             </div>
 
             <div class="section">
-                <h2>Pending Actions</h2>
-                <div id="pendingActionsList"></div>
+                <h2>Approved Events</h2>
+                <div id="approvedEventsList"></div>
             </div>
         </div>
 
@@ -380,7 +345,6 @@
                 <p style="color: #666; margin-bottom: 20px;">Review and approve event proposals from clubs and committees</p>
 
                 <div id="successMessage" class="success-message"></div>
-                <div id="errorMessage" class="error-message"></div>
 
                 <h3 style="margin-top: 30px;">Pending Approvals (Faculty Level)</h3>
                 <div id="facultyApprovalsList"></div>
@@ -446,10 +410,6 @@
                                 <th>Count</th>
                             </tr>
                             <tr>
-                                <td>Draft</td>
-                                <td id="draftCount">0</td>
-                            </tr>
-                            <tr>
                                 <td>Submitted</td>
                                 <td id="submittedCount">0</td>
                             </tr>
@@ -485,7 +445,6 @@
     <script>
         const ADMIN_KEY = 'currentAdminUser';
         const STORAGE_KEY = 'eventManagementData';
-        const TASKS_KEY = 'taskManagementData';
         const COMMUNICATION_KEY = 'communicationData';
 
         window.onload = function() {
@@ -493,8 +452,8 @@
             loadAdminInfo();
             initializeStorage();
             refreshDashboard();
-            // Refresh dashboard every 3 seconds to show real-time updates
-            setInterval(refreshDashboard, 3000);
+            // Auto-refresh every 2 seconds
+            setInterval(refreshDashboard, 2000);
         };
 
         function checkLogin() {
@@ -518,9 +477,6 @@
             if (!localStorage.getItem(STORAGE_KEY)) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({ events: [], registrations: [] }));
             }
-            if (!localStorage.getItem(TASKS_KEY)) {
-                localStorage.setItem(TASKS_KEY, JSON.stringify({ tasks: [] }));
-            }
             if (!localStorage.getItem(COMMUNICATION_KEY)) {
                 localStorage.setItem(COMMUNICATION_KEY, JSON.stringify({ 
                     threads: [], 
@@ -543,17 +499,19 @@
             const allEvents = data.events || [];
 
             // Update stats
+            const pendingEvents = allEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW');
+            const approvedEvents = allEvents.filter(e => e.status === 'APPROVED');
+
             document.getElementById('totalEvents').textContent = allEvents.length;
-            document.getElementById('pendingApprovals').textContent = 
-                allEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
-            document.getElementById('approvedEvents').textContent = 
-                allEvents.filter(e => e.status === 'APPROVED').length;
+            document.getElementById('pendingApprovals').textContent = pendingEvents.length;
+            document.getElementById('approvedEvents').textContent = approvedEvents.length;
 
             const orgs = [...new Set(allEvents.map(e => e.organization))];
             document.getElementById('activeOrgs').textContent = orgs.length;
 
-            detectConflicts();
             refreshPendingActions();
+            refreshApprovedEvents();
+            detectConflicts();
             refreshApprovals();
             refreshCalendar();
             refreshOrganizations();
@@ -562,20 +520,15 @@
 
         function refreshPendingActions() {
             const data = loadData();
-            
-            // Get all pending events (SUBMITTED or FACULTY_REVIEW)
             const pendingEvents = data.events.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW');
             
             let html = '';
-            
             if (pendingEvents.length === 0) {
                 html = '<div class="empty-state">No pending actions</div>';
             } else {
-                html = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Current Status</th><th>Submitted</th></tr>';
-                
+                html = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Status</th><th>Submitted</th></tr>';
                 pendingEvents.forEach(evt => {
                     const statusText = evt.status === 'SUBMITTED' ? 'Awaiting Faculty Review' : 'Awaiting Dean Review';
-                    
                     html += `
                         <tr>
                             <td><strong>${evt.title}</strong></td>
@@ -586,11 +539,34 @@
                         </tr>
                     `;
                 });
-                
                 html += '</table>';
             }
-            
             document.getElementById('pendingActionsList').innerHTML = html;
+        }
+
+        function refreshApprovedEvents() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+            
+            let html = '';
+            if (approvedEvents.length === 0) {
+                html = '<div class="empty-state">No approved events yet</div>';
+            } else {
+                html = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Venue</th><th>Capacity</th></tr>';
+                approvedEvents.forEach(evt => {
+                    html += `
+                        <tr>
+                            <td><strong>${evt.title}</strong></td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.venue}</td>
+                            <td>${evt.capacity}</td>
+                        </tr>
+                    `;
+                });
+                html += '</table>';
+            }
+            document.getElementById('approvedEventsList').innerHTML = html;
         }
 
         function detectConflicts() {
@@ -622,7 +598,7 @@
 
             let html = '';
             if (conflicts.length === 0) {
-                html = '<div class="alert-box success">No calendar conflicts detected. All events can proceed as scheduled.</div>';
+                html = '<div class="alert-box">No calendar conflicts detected. All events can proceed as scheduled.</div>';
             } else {
                 html = '<div class="alert-box warning"><strong>Calendar Conflicts Detected:</strong><ul style="margin-top: 10px; margin-left: 20px;">';
                 conflicts.forEach(conflict => {
@@ -630,7 +606,6 @@
                 });
                 html += '</ul></div>';
             }
-            document.getElementById('conflictAlerts').innerHTML = html;
             document.getElementById('conflictWarnings').innerHTML = html;
         }
 
@@ -652,5 +627,178 @@
                             <td>${new Date(evt.date).toLocaleDateString()}</td>
                             <td>${evt.createdAt}</td>
                             <td>
-                                <button class="btn btn-approve" onclick="approveEvent(${evt.id}, 'FACULTY')`*
-
+                                <button class="btn btn-approve btn-small" onclick="approveEvent(${evt.id}, 'FACULTY')">Approve</button>
+                                <button class="btn btn-reject btn-small" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                facultyHtml += '</table>';
+            }
+            document.getElementById('facultyApprovalsList').innerHTML = facultyHtml;
+
+            const deanPending = data.events.filter(e => e.status === 'FACULTY_REVIEW');
+            let deanHtml = '';
+            
+            if (deanPending.length === 0) {
+                deanHtml = '<div class="empty-state">No events pending dean review</div>';
+            } else {
+                deanHtml = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Faculty Approved</th><th>Actions</th></tr>';
+                deanPending.forEach(evt => {
+                    deanHtml += `
+                        <tr>
+                            <td><strong>${evt.title}</strong></td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.createdAt}</td>
+                            <td>
+                                <button class="btn btn-approve btn-small" onclick="approveEvent(${evt.id}, 'DEAN')">Approve</button>
+                                <button class="btn btn-reject btn-small" onclick="rejectEvent(${evt.id})">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                deanHtml += '</table>';
+            }
+            document.getElementById('deanApprovalsList').innerHTML = deanHtml;
+        }
+
+        function approveEvent(eventId, level) {
+            const data = loadData();
+            const event = data.events.find(e => e.id === eventId);
+
+            if (event) {
+                if (level === 'FACULTY') {
+                    event.status = 'FACULTY_REVIEW';
+                } else if (level === 'DEAN') {
+                    event.status = 'APPROVED';
+                }
+                saveData(data);
+                document.getElementById('successMessage').innerHTML = 'Event approved successfully!';
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+                refreshDashboard();
+            }
+        }
+
+        function rejectEvent(eventId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                const data = loadData();
+                const event = data.events.find(e => e.id === eventId);
+
+                if (event) {
+                    event.status = 'REJECTED';
+                    event.rejectionReason = reason;
+                    saveData(data);
+                    document.getElementById('successMessage').innerHTML = 'Event rejected';
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 3000);
+                    refreshDashboard();
+                }
+            }
+        }
+
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                const data = loadData();
+                data.events = data.events.filter(e => e.id !== eventId);
+                saveData(data);
+                refreshDashboard();
+            }
+        }
+
+        function refreshCalendar() {
+            const data = loadData();
+            const approvedEvents = data.events.filter(e => e.status === 'APPROVED');
+
+            if (approvedEvents.length === 0) {
+                document.getElementById('allEventsTable').style.display = 'none';
+                document.getElementById('noEvents').style.display = 'block';
+            } else {
+                document.getElementById('noEvents').style.display = 'none';
+                document.getElementById('allEventsTable').style.display = 'table';
+
+                let html = '<tr><th>Event Title</th><th>Organization</th><th>Date</th><th>Venue</th><th>Capacity</th><th>Status</th><th>Action</th></tr>';
+                approvedEvents.forEach(evt => {
+                    html += `
+                        <tr>
+                            <td><strong>${evt.title}</strong></td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td>${evt.venue}</td>
+                            <td>${evt.capacity}</td>
+                            <td><span class="badge badge-approved">Approved</span></td>
+                            <td><button class="btn btn-reject btn-small" onclick="deleteEvent(${evt.id})">Delete</button></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('allEventsTable').innerHTML = html;
+            }
+        }
+
+        function refreshOrganizations() {
+            const data = loadData();
+            const orgNames = [
+                'Athflex', 'Mezzo', 'TedEx', 'ARC', 'IRC', 'MRC',
+                'Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy',
+                'CommWing', 'Athena', 'Altius', 'Pahel', 'Antragna', 'Prarambh'
+            ];
+
+            let html = '<tr><th>Organization Name</th><th>Type</th><th>Total Events</th><th>Approved Events</th><th>Pending Approvals</th></tr>';
+
+            orgNames.forEach(org => {
+                const orgEvents = data.events.filter(e => e.organization === org);
+                const approved = orgEvents.filter(e => e.status === 'APPROVED').length;
+                const pending = orgEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
+                const type = ['Finacea', 'Tassavur', 'Mercatus', 'Opuskriya', 'Insightx', 'Synergy', 'CommWing', 'Athena', 'Altius', 'Pahel', 'Antragna', 'Prarambh'].includes(org) ? 'Club' : 'Committee';
+
+                html += `
+                    <tr>
+                        <td>${org}</td>
+                        <td>${type}</td>
+                        <td>${orgEvents.length}</td>
+                        <td>${approved}</td>
+                        <td>${pending}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('organizationsTable').innerHTML = html;
+        }
+
+        function refreshAnalytics() {
+            const data = loadData();
+            const allEvents = data.events || [];
+
+            document.getElementById('submittedCount').textContent = allEvents.filter(e => e.status === 'SUBMITTED').length;
+            document.getElementById('facultyCount').textContent = allEvents.filter(e => e.status === 'FACULTY_REVIEW').length;
+            document.getElementById('approvedCount').textContent = allEvents.filter(e => e.status === 'APPROVED').length;
+            document.getElementById('rejectedCount').textContent = allEvents.filter(e => e.status === 'REJECTED').length;
+
+            const orgs = [...new Set(allEvents.map(e => e.organization))];
+            let orgHtml = '<tr><th>Organization</th><th>Events</th></tr>';
+            orgs.forEach(org => {
+                const count = allEvents.filter(e => e.organization === org).length;
+                orgHtml += `<tr><td>${org}</td><td>${count}</td></tr>`;
+            });
+            document.getElementById('orgActivityTable').innerHTML = orgHtml;
+        }
+
+        function openTab(event, tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
