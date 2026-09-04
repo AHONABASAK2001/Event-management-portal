@@ -439,8 +439,8 @@
                     </div>
 
                     <div class="form-group">
-<label>Duration (hours) <span style="color: red;">*</span></label>
-<input type="number" id="eventDuration" placeholder="e.g., 2" step="0.5" min="0.5" required>
+                        <label>Duration (minutes) <span style="color: red;">*</span></label>
+                        <input type="number" id="eventDuration" placeholder="e.g., 120" required>
                     </div>
 
                     <button type="submit" class="btn-submit">Create Event</button>
@@ -543,8 +543,7 @@
                 date: document.getElementById('eventDate').value,
                 venue: document.getElementById('eventVenue').value,
                 capacity: parseInt(document.getElementById('eventCapacity').value),
-                durationHours = parseFloat(document.getElementById('eventDuration').value),
-                duration = Math.round(durationHours * 60); // store in minutes,
+                duration: parseInt(document.getElementById('eventDuration').value),
                 status: 'SUBMITTED',
                 createdAt: new Date().toLocaleString(),
                 createdBy: user.name,
