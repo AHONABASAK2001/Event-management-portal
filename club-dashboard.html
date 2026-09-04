@@ -315,6 +315,20 @@
             background: #0077aa;
         }
 
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85em;
+        }
+
         @media (max-width: 768px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -394,7 +408,7 @@
         <div id="create-event" class="tab-content">
             <div class="section">
                 <h2>Create Event Proposal</h2>
-                <div id="successMessage" class="success-message">Event created successfully!</div>
+                <div id="successMessage" class="success-message">Event created successfully! It is now awaiting faculty approval.</div>
 
                 <form id="eventForm" onsubmit="handleCreateEvent(event)">
                     <div class="grid-2">
@@ -472,6 +486,8 @@
             loadUserInfo();
             initializeStorage();
             refreshDashboard();
+            // Refresh every 2 seconds to show real-time updates
+            setInterval(refreshDashboard, 2000);
         };
 
         function checkLogin() {
@@ -522,6 +538,7 @@
                 id: Date.now(),
                 title: document.getElementById('eventTitle').value,
                 organization: user.organization,
+                organizationEmail: user.email,
                 description: document.getElementById('eventDescription').value,
                 date: document.getElementById('eventDate').value,
                 venue: document.getElementById('eventVenue').value,
@@ -545,16 +562,27 @@
             refreshDashboard();
         }
 
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                const data = loadData();
+                data.events = data.events.filter(e => e.id !== eventId);
+                saveData(data);
+                refreshDashboard();
+            }
+        }
+
         function refreshDashboard() {
             const user = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
             const data = loadData();
 
             const orgEvents = data.events.filter(e => e.organization === user.organization);
 
+            // Update stats
             document.getElementById('totalEvents').textContent = orgEvents.length;
-            document.getElementById('pendingCount').textContent = orgEvents.filter(e => e.status === 'DRAFT' || e.status === 'SUBMITTED').length;
+            document.getElementById('pendingCount').textContent = orgEvents.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW').length;
             document.getElementById('approvedCount').textContent = orgEvents.filter(e => e.status === 'APPROVED').length;
 
+            // Recent events
             let html = '';
             if (orgEvents.length === 0) {
                 html = '<div class="empty-state">No events created yet</div>';
@@ -566,7 +594,6 @@
                             <p>Date: ${new Date(evt.date).toLocaleDateString()}</p>
                             <p>Venue: ${evt.venue} | Capacity: ${evt.capacity}</p>
                             <span class="badge ${
-                                evt.status === 'DRAFT' ? 'badge-draft' :
                                 evt.status === 'SUBMITTED' || evt.status === 'FACULTY_REVIEW' ? 'badge-pending' :
                                 evt.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected'
                             }">${evt.status}</span>
@@ -576,23 +603,25 @@
             }
             document.getElementById('recentEventsList').innerHTML = html;
 
+            // My events list
             let myEventsHtml = '';
             if (orgEvents.length === 0) {
                 myEventsHtml = '<div class="empty-state">No events created yet</div>';
             } else {
-                myEventsHtml = '<table><tr><th>Title</th><th>Date</th><th>Venue</th><th>Status</th><th>Action</th></tr>';
+                myEventsHtml = '<table><tr><th>Title</th><th>Date</th><th>Venue</th><th>Status</th><th>Actions</th></tr>';
                 orgEvents.forEach(evt => {
                     myEventsHtml += `
                         <tr>
-                            <td>${evt.title}</td>
+                            <td><strong>${evt.title}</strong></td>
                             <td>${new Date(evt.date).toLocaleDateString()}</td>
                             <td>${evt.venue}</td>
                             <td><span class="badge ${
-                                evt.status === 'DRAFT' ? 'badge-draft' :
                                 evt.status === 'SUBMITTED' || evt.status === 'FACULTY_REVIEW' ? 'badge-pending' :
                                 evt.status === 'APPROVED' ? 'badge-approved' : 'badge-rejected'
                             }">${evt.status}</span></td>
-                            <td><button class="btn btn-view" onclick="viewEvent(${evt.id})">View</button></td>
+                            <td>
+                                ${evt.status !== 'APPROVED' ? `<button class="btn btn-delete btn-small" onclick="deleteEvent(${evt.id})">Delete</button>` : '<span style="color: #999;">Cannot delete approved events</span>'}
+                            </td>
                         </tr>
                     `;
                 });
@@ -600,6 +629,7 @@
             }
             document.getElementById('myEventsList').innerHTML = myEventsHtml;
 
+            // Pending tasks
             const tasksData = JSON.parse(localStorage.getItem(TASKS_KEY)) || { tasks: [] };
             const orgTasks = tasksData.tasks.filter(t => t.organization === user.organization && t.status !== 'COMPLETED');
             document.getElementById('pendingTasks').textContent = orgTasks.length;
@@ -624,13 +654,9 @@
             }
             document.getElementById('tasksList').innerHTML = tasksHtml;
 
-            const commData = JSON.parse(localStorage.getItem(COMMUNICATION_KEY)) || { messages: [] };
+            // Communication
             let commHtml = '<div class="empty-state">No messages yet. Start collaborating with other committees!</div>';
             document.getElementById('communicationList').innerHTML = commHtml;
-        }
-
-        function viewEvent(eventId) {
-            alert('Event details: ' + eventId);
         }
 
         function openTab(event, tabName) {
