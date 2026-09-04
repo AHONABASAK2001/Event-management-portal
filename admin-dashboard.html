@@ -531,6 +531,7 @@
             document.getElementById('activeOrgs').textContent = orgs.length;
 
             detectConflicts();
+            refreshPendingActions();
             refreshApprovals();
             refreshCalendar();
             refreshOrganizations();
@@ -578,6 +579,40 @@
             document.getElementById('conflictWarnings').innerHTML = html;
         }
 
+        function refreshPendingActions() {
+            const data = loadData();
+            
+            // Get all pending events (both SUBMITTED and FACULTY_REVIEW)
+            const pendingEvents = data.events.filter(e => e.status === 'SUBMITTED' || e.status === 'FACULTY_REVIEW');
+            
+            let html = '';
+            
+            if (pendingEvents.length === 0) {
+                html = '<div class="empty-state">No pending actions</div>';
+            } else {
+                html = '<table><tr><th>Event</th><th>Organization</th><th>Date</th><th>Status</th><th>Submitted</th></tr>';
+                
+                pendingEvents.forEach(evt => {
+                    const statusBadge = evt.status === 'SUBMITTED' ? 'badge-pending' : 'badge-pending';
+                    const statusText = evt.status === 'SUBMITTED' ? 'Awaiting Faculty Review' : 'Awaiting Dean Review';
+                    
+                    html += `
+                        <tr>
+                            <td>${evt.title}</td>
+                            <td>${evt.organization}</td>
+                            <td>${new Date(evt.date).toLocaleDateString()}</td>
+                            <td><span class="badge ${statusBadge}">${statusText}</span></td>
+                            <td>${evt.createdAt}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</table>';
+            }
+            
+            document.getElementById('pendingActionsList').innerHTML = html;
+        }
+        
         function refreshApprovals() {
             const data = loadData();
             
