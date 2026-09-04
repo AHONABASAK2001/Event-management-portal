@@ -15,15 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f6fa;
         }
-.event-item.conflict {
-  border-left: 4px solid #dc3545;
-  background: #fff5f5;
-}
 
-.event-badge.conflict {
-  background-color: #dc3545 !important;
-  color: #fff !important;
-}
         .navbar {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
@@ -385,8 +377,8 @@
                     if (event1.venue === event2.venue) {
                         const date1 = new Date(event1.date);
                         const date2 = new Date(event2.date);
-const timeDiffHours = Math.abs(date1 - date2) / (1000 * 60 * 60);
-if (timeDiffHours < (event1.duration || 2)) {
+const timeDiff = Math.abs(date1 - date2) / (1000 * 60);
+if (timeDiff < (event1.duration || 120)) {
                             clashes.push({
                                 event1Id: event1.id,
                                 event2Id: event2.id,
@@ -536,8 +528,7 @@ if (timeDiffHours < (event1.duration || 2)) {
                             <p>Date: ${new Date(event.date).toLocaleDateString()} at ${new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                             <p>Venue: ${event.venue}</p>
                             <p>Capacity: ${event.capacity}</p>
-                            <p>Duration: ${(event.duration / 60).toFixed(1)} hours</p>
-                            ${isInClash ? '<p style="color: #dc3545; font-weight: 600;">Warning: Venue conflict detected</p>' : ''}
+                            <p>Duration: ${event.duration} minutes</p>
                             <span class="event-badge ${badgeClass}">${isInClash ? 'Conflict' : 'Approved'}</span>
                         </div>
                     `;
