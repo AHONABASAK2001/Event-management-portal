@@ -393,7 +393,7 @@
                 document.getElementById('eventVenue').textContent = event.venue;
                 document.getElementById('eventCapacity').textContent = event.capacity + ' people';
                 document.getElementById('eventOrganization').textContent = event.organization;
-                document.getElementById('eventDuration').textContent = event.duration;
+                document.getElementById('eventDuration').textContent = (event.duration / 60).toFixed(1);
                 eventBox.style.display = 'block';
             } else {
                 eventBox.style.display = 'none';
